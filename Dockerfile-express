@@ -1,0 +1,19 @@
+# Etapa de construcción
+FROM node:22.13.1-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build-prod
+
+# Etapa de runtime, recomendable: nginx
+FROM node:22.13.1-alpine
+WORKDIR /app
+COPY --from=build /app/dist/miw-frontend-foro/browser /app
+RUN npm install -g serve
+EXPOSE 10000
+CMD ["serve", "-s", "-l", "10000", "/app"]
+
+#
+#> docker build -t miw-frontend-foro-prod .
+#> docker run -it -p 8080:10000 --name miw-frontend-foro-prod-app miw-frontend-foro-prod
