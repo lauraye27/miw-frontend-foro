@@ -1,6 +1,6 @@
 FROM node:22.13.1-alpine AS build
 WORKDIR /app
-COPY package.json package-lock.json
+COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 RUN npm run build-prod
@@ -14,4 +14,4 @@ CMD ["nginx", "-g", "daemon off;"]
 
 #
 #> docker build -t miw-frontend-foro-prod .
-#> docker run -it -p 8080:10000 --name miw-frontend-foro-prod-app miw-frontend-foro-prod
+#> docker run -it -p 8080:80 --name miw-frontend-foro-prod-app miw-frontend-foro-prod
