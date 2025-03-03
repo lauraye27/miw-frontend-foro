@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 
@@ -13,24 +13,25 @@ import {Role} from '@core/models/role.model';
 @Injectable({providedIn: 'root'})
 export class AuthService {
   static readonly END_POINT = environment.REST_USER + '/user/login';
-  private user: User;
+
+  private readonly userSubject = new BehaviorSubject<User | null>(null);
+  user$ = this.userSubject.asObservable();
+  private readonly jwtHelper = new JwtHelperService();
 
   constructor(private readonly httpService: HttpService, private readonly router: Router) {
+    if (typeof window !== 'undefined' && localStorage.getItem('token')) {
+      this.setUserFromToken(localStorage.getItem('token'));
+    }
   }
 
   login(email: string, password: string): Observable<User> {
-    console.log('Tentando login com:', email, password);
-    return this.httpService
-      .post(AuthService.END_POINT, {email, password})
-      .pipe(
-         map(jsonToken => {
-           const jwtHelper = new JwtHelperService();
-           this.user = jsonToken; // {token:jwt} => user.token = jwt
-           this.user.email = jwtHelper.decodeToken(jsonToken.token).name;
-           this.user.role = jwtHelper.decodeToken(jsonToken.token).role;
-           return this.user;
-         })
-      );
+    return this.httpService.post(AuthService.END_POINT, { email, password }).pipe(
+      map(jsonToken => {
+        localStorage.setItem('token', jsonToken.token);
+        this.setUserFromToken(jsonToken.token);
+        return this.userSubject.value;
+      })
+    );
   }
 
   register(user: { firstName: string; lastName: string; email: string; password: string }): Observable<any> {
@@ -45,16 +46,17 @@ export class AuthService {
   }
 
   logout(): void {
-    this.user = undefined;
-    this.router.navigate(['']).then();
+    localStorage.removeItem('token');
+    this.userSubject.next(null);
+    this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {
-    return this.user != null && !(new JwtHelperService().isTokenExpired(this.user.token));
+    return this.userSubject.value != null;
   }
 
   hasRoles(roles: Role[]): boolean {
-    return this.isAuthenticated() && roles.includes(this.user.role);
+    return this.isAuthenticated() && roles.includes(this.userSubject.value.role);
   }
 
   isAdmin(): boolean {
@@ -74,15 +76,25 @@ export class AuthService {
   }
 
   getName(): string {
-    return this.user ? this.user.firstName : '???';
+    return this.userSubject.value ? this.userSubject.value.firstName : '???';
   }
 
   getToken(): string {
-    return this.user ? this.user.token : undefined;
+    return this.userSubject.value ? this.userSubject.value.token : undefined;
   }
 
-  getUser(): User {
-    return this.user;
+  getUser(): User | null {
+    return this.userSubject.value;
+  }
+
+  private setUserFromToken(token: string) {
+    const decodedToken = this.jwtHelper.decodeToken(token);
+    const user: User = {
+      email: decodedToken.name,
+      role: decodedToken.role,
+      token: token
+    };
+    this.userSubject.next(user);
   }
 
 }
