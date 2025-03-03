@@ -12,27 +12,24 @@ import {Role} from '@core/models/role.model';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  static readonly END_POINT = environment.REST_USER + '/users/token';
+  static readonly END_POINT = environment.REST_USER + '/user/login';
   private user: User;
 
   constructor(private readonly httpService: HttpService, private readonly router: Router) {
   }
 
   login(email: string, password: string): Observable<User> {
+    console.log('Tentando login com:', email, password);
     return this.httpService
-      .post(environment.REST_USER + 'user/login', this.user)
+      .post(AuthService.END_POINT, {email, password})
       .pipe(
-        // map(jsonToken => {
-        //   const jwtHelper = new JwtHelperService();
-        //   this.user = jsonToken; // {token:jwt} => user.token = jwt
-        //   this.user.email = jwtHelper.decodeToken(jsonToken.token).name;
-        //   this.user.role = jwtHelper.decodeToken(jsonToken.token).role;
-        //   return this.user;
-        // })
-        map(response => {
-          console.log('User login:', response);
-          return response;
-        })
+         map(jsonToken => {
+           const jwtHelper = new JwtHelperService();
+           this.user = jsonToken; // {token:jwt} => user.token = jwt
+           this.user.email = jwtHelper.decodeToken(jsonToken.token).name;
+           this.user.role = jwtHelper.decodeToken(jsonToken.token).role;
+           return this.user;
+         })
       );
   }
 
