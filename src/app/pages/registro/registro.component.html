@@ -1,19 +1,29 @@
-
 <app-navbar></app-navbar>
 
-<div
-  class="container d-flex justify-content-center align-items-center vh-100 bg-light"
->
+<div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
   <div class="card shadow-lg p-4" style="width: 400px; border-radius: 12px">
-    <h2 class="text-center mb-4">Registro</h2>
-    <form>
+    <h2 class="text-center mb-4">Register</h2>
+    <form (ngSubmit)="register()">
       <div class="mb-3">
-        <label for="username" class="form-label">Nombre de Usuario</label>
+        <label for="firstName" class="form-label">First Name</label>
         <input
           type="text"
-          id="username"
+          id="firstName"
           class="form-control"
-          placeholder="Ingresa tu nombre de usuario"
+          placeholder="First name"
+          [(ngModel)]="firstName" name="firstName"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input
+          type="text"
+          id="lastName"
+          class="form-control"
+          placeholder="Last name"
+          [(ngModel)]="lastName" name="lastName"
           required
         />
       </div>
@@ -24,18 +34,19 @@
           type="email"
           id="email"
           class="form-control"
-          placeholder="Ingresa tu email"
+          [(ngModel)]="email" name="email"
           required
         />
       </div>
 
       <div class="mb-3">
-        <label for="password" class="form-label">Contraseña</label>
+        <label for="password" class="form-label">Password</label>
         <input
           type="password"
           id="password"
           class="form-control"
-          placeholder="Ingresa tu contraseña"
+          placeholder="8+ characters (at least 1 letter & 1 number)"
+          [(ngModel)]="password" name="password"
           required
         />
       </div>
@@ -48,18 +59,18 @@
           type="password"
           id="confirmPassword"
           class="form-control"
-          placeholder="Confirma tu contraseña"
+          [(ngModel)]="confirmPassword" name="confirmPassword"
           required
         />
       </div>
 
       <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">
-        Registrarse
+        Register
       </button>
 
       <div class="text-center mt-3">
         <a href="/login" class="text-decoration-none text-muted">
-          ¿Ya tienes una cuenta? Inicia sesión aquí.
+          Already have an account? Log in
         </a>
       </div>
     </form>
