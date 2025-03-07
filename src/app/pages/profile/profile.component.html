@@ -1,0 +1,56 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <h2>Profile</h2>
+
+  <div class="text-end mb-3">
+    <button type="button" class="btn btn-primary" (click)="toggleEdit()">
+      {{ isEditMode ? 'Cancel' : 'Edit' }}
+    </button>
+  </div>
+
+  <form [formGroup]="userProfileForm" (ngSubmit)="saveChanges()" *ngIf="isEditMode">
+    <div class="mb-3">
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" class="form-control" formControlName="firstName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" class="form-control" formControlName="lastName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="email">Email</label>
+      <input type="email" id="email" class="form-control" formControlName="email" required>
+    </div>
+
+    <div class="mb-3" *ngIf="showPasswordSection">
+      <label for="currentPassword">Password</label>
+      <input type="password" id="currentPassword" class="form-control" formControlName="currentPassword" required>
+    </div>
+
+    <div class="mb-3" *ngIf="showPasswordSection">
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" class="form-control" formControlName="newPassword" required>
+    </div>
+
+    <div class="mb-3" *ngIf="showPasswordSection">
+      <label for="confirmPassword">Confirm New Password</label>
+      <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required>
+    </div>
+
+    <button type="button" class="btn btn-secondary ms-2" (click)="togglePasswordSection()">Change Password</button>
+
+    <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+  </form>
+
+  <div *ngIf="!isEditMode">
+    <p><strong>First Name:</strong> {{ userProfileForm.get('firstName')?.value }}</p>
+    <p><strong>Last Name:</strong> {{ userProfileForm.get('lastName')?.value }}</p>
+    <p><strong>Email:</strong> {{ userProfileForm.get('email')?.value }}</p>
+  </div>
+</div>
+

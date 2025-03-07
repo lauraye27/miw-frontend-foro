@@ -21,3 +21,15 @@
   outline: none;
   box-shadow: none;
 }
+
+.user-avatar {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #0d6efd;
+  color: white;
+  text-align: center;
+  line-height: 30px;
+  font-weight: bold;
+}
