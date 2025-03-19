@@ -6,7 +6,7 @@ import {Router} from '@angular/router';
 import {environment} from '@env';
 import {NavbarComponent} from '../../navbar/navbar.component';
 import {NgClass, NgIf} from '@angular/common';
-import {tap, throwError} from 'rxjs';
+import {filter, take, tap, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {User} from '@core/models/user.model';
 
@@ -55,7 +55,12 @@ export class ProfileComponent  implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadUserDetails();
+    this.authService.user$.pipe(
+      filter(user => !!user),
+      take(1)
+    ).subscribe(user => {
+      this.loadUserDetails();
+    });
   }
 
   loadUserDetails(): void {
@@ -63,6 +68,7 @@ export class ProfileComponent  implements OnInit {
       user => {
         this.user = user;
         this.userProfileForm.patchValue({
+          id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email
@@ -122,42 +128,6 @@ export class ProfileComponent  implements OnInit {
     this.errorMessage = '';
     this.showPasswordSection = false;
   }
-
-  // saveChanges(): void {
-  //   if (this.userProfileForm.invalid) {
-  //     this.errorMessage = 'Please check the fields';
-  //     return;
-  //   }
-  //
-  //   const { firstName, lastName, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
-  //   const updatedUser: any = { firstName, lastName, email };
-  //
-  //   if (this.showPasswordSection) {
-  //     if (!currentPassword || !newPassword || newPassword !== confirmPassword) {
-  //       this.errorMessage = 'Passwords do not match or current password is missing';
-  //       return;
-  //     }
-  //
-  //     this.authService.verifyCurrentPassword(currentPassword).subscribe(
-  //       isValid => {
-  //         if (isValid) {
-  //           updatedUser['password'] = newPassword;
-  //           this.updateUser(updatedUser);
-  //           if (this.showPasswordSection) {
-  //             updatedUser['password'] = newPassword;
-  //           }
-  //         } else {
-  //           this.errorMessage = 'Current password is incorrect';
-  //         }
-  //       },
-  //       error => {
-  //         this.errorMessage = 'Error verifying current password';
-  //       }
-  //     );
-  //   } else {
-  //     this.updateUser(updatedUser);
-  //   }
-  // }
 
   private validateForm(): { isValid: boolean, data: any, errorMessage: string } {
     if (this.userProfileForm.invalid) {
