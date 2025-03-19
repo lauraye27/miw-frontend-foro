@@ -22,35 +22,80 @@
 
     <div class="mb-3">
       <label for="email">Email</label>
-      <input type="email" id="email" class="form-control" formControlName="email" required>
+      <input type="email" id="email" class="form-control" formControlName="email"  autocomplete="email" required>
     </div>
 
     <div class="mb-3" *ngIf="showPasswordSection">
-      <label for="currentPassword">Password</label>
-      <input type="password" id="currentPassword" class="form-control" formControlName="currentPassword" required>
+      <label for="password">Password</label>
+      <div class="input-group">
+        <input type="password" id="password" class="form-control" formControlName="currentPassword" required>
+        <button type="button" class="btn btn-outline-secondary input-group-text"
+          (click)="togglePasswordVisibility('password')">
+          <i class="fa-solid" [ngClass]="showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
     </div>
 
     <div class="mb-3" *ngIf="showPasswordSection">
       <label for="newPassword">New Password</label>
-      <input type="password" id="newPassword" class="form-control" formControlName="newPassword" required>
+      <div class="input-group">
+        <input type="password" id="newPassword" class="form-control" formControlName="newPassword" required>
+        <button type="button" class="btn btn-outline-secondary input-group-text"
+          (click)="togglePasswordVisibility('newPassword')">
+          <i class="fa-solid" [ngClass]="showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
+      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && userProfileForm.get('newPassword').touched">
+        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['required']">
+          New password is required
+        </span>
+        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['minlength']">
+          Password must be at least 8 characters long
+        </span>
+
+        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['pattern']">
+          Password must contain at least one letter and one number
+        </span>
+      </small>
     </div>
 
     <div class="mb-3" *ngIf="showPasswordSection">
       <label for="confirmPassword">Confirm New Password</label>
-      <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required>
+      <div class="input-group">
+        <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required>
+        <button type="button" class="btn btn-outline-secondary input-group-text"
+                (click)="togglePasswordVisibility('confirmPassword')">
+          <i class="fa-solid" [ngClass]="showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
+      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && userProfileForm.get('confirmPassword')?.touched">
+        Passwords do not match
+      </small>
     </div>
 
-    <button type="button" class="btn btn-secondary ms-2" (click)="togglePasswordSection()">Change Password</button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button type="button" class="btn btn-secondary ms-2" (click)="togglePasswordSection()">
+        {{ showPasswordSection ? 'Cancel' : 'Change Password' }}
+      </button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
 
     <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <button type="submit" class="btn btn-primary">Save</button>
   </form>
 
-  <div *ngIf="!isEditMode">
-    <p><strong>First Name:</strong> {{ userProfileForm.get('firstName')?.value }}</p>
-    <p><strong>Last Name:</strong> {{ userProfileForm.get('lastName')?.value }}</p>
-    <p><strong>Email:</strong> {{ userProfileForm.get('email')?.value }}</p>
+  <div *ngIf="!isEditMode" class="user-profile card shadow-sm p-4">
+    <div class="d-flex align-items-center mb-3">
+      <div class="avatar bg-primary text-white d-flex justify-content-center align-items-center">
+        <span class="fs-4">{{ user?.firstName[0] }}{{ user?.lastName[0] }}</span>
+      </div>
+      <h4 class="ms-3">{{ user?.firstName }} {{ user?.lastName }}</h4>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><strong>Email:</strong> {{ user?.email }}</li>
+      <li class="list-group-item"><strong>Password:</strong> <span class="text-muted"> ••••••••</span></li>
+    </ul>
   </div>
 </div>
 

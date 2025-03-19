@@ -13,7 +13,9 @@ import {HttpHeaders} from '@angular/common/http';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  static readonly END_POINT = environment.REST_USER + '/user/login';
+  static readonly LOGIN_ENDPOINT = environment.REST_USER + '/user/login';
+  static readonly VERIFY_PASSWORD_ENDPOINT = environment.REST_USER + '/user/verifyPassword';
+  static readonly REGISTER_ENDPOINT = environment.REST_USER + '/user/register';
 
   private readonly userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
@@ -25,18 +27,8 @@ export class AuthService {
     }
   }
 
-  // login(email: string, password: string): Observable<User> {
-  //   return this.httpService.post(AuthService.END_POINT, { email, password }).pipe(
-  //     map(jsonToken => {
-  //       localStorage.setItem('token', jsonToken.token);
-  //       this.setUserFromToken(jsonToken.token);
-  //       return this.userSubject.value;
-  //     })
-  //   );
-  // }
-
   login(email: string, password: string): Observable<User> {
-    return this.httpService.post(AuthService.END_POINT, { email, password }).pipe(
+    return this.httpService.post(AuthService.LOGIN_ENDPOINT, { email, password }).pipe(
       switchMap(jsonToken => {
         localStorage.setItem('token', jsonToken.token);
         this.setUserFromToken(jsonToken.token);
@@ -50,7 +42,7 @@ export class AuthService {
 
   register(user: { firstName: string; lastName: string; email: string; password: string }): Observable<any> {
     return this.httpService
-      .post(environment.REST_USER + '/user/register', user)
+      .post(AuthService.REGISTER_ENDPOINT, user)
       .pipe(
         map(response => {
           console.log('User registered:', response);
@@ -77,16 +69,20 @@ export class AuthService {
     return this.hasRoles([Role.ADMIN]);
   }
 
-  untilManager(): boolean {
-    return this.hasRoles([Role.ADMIN, Role.MANAGER]);
+  isMember(): boolean {
+    return this.hasRoles([Role.MEMBER]);
   }
 
-  untilOperator(): boolean {
-    return this.hasRoles([Role.ADMIN, Role.MANAGER, Role.OPERATOR]);
+  isGuest(): boolean {
+    return this.hasRoles([Role.GUEST]);
   }
 
-  isCustomer(): boolean {
-    return this.hasRoles([Role.CUSTOMER]);
+  untilAuthenticated(): boolean {
+    return this.hasRoles([Role.ADMIN, Role.MEMBER]);
+  }
+
+  untilNoAuthenticated(): boolean {
+    return this.hasRoles([Role.ADMIN, Role.MEMBER, Role.GUEST]);
   }
 
   getName(): string {
@@ -100,56 +96,48 @@ export class AuthService {
   getUser(): User | null {
     return this.userSubject.value;
   }
-  // getUser(token: string): Observable<User> {
-  //   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  //
-  //   return this.httpService.get(`${environment.REST_USER}/user/me`, { headers }).pipe(
-  //     map(user => ({
-  //       ...user,
-  //       token
-  //     }))
-  //   );
-  // }
 
   private setUserFromToken(token: string) {
     const decodedToken = this.jwtHelper.decodeToken(token);
     const user: User = {
-      id: decodedToken.sub ? +decodedToken.sub : undefined,
+      id: decodedToken.id,
       firstName: decodedToken.firstName,
       lastName: decodedToken.lastName,
-      email: decodedToken.name,
+      email: decodedToken.email,
       role: decodedToken.role,
       token: token
     };
     this.userSubject.next(user);
   }
 
-  // getUserDetails(): Observable<User> {
-  //   if (typeof localStorage === 'undefined') {
-  //     return throwError(() => new Error('localStorage is not available'));
-  //   }
-  //
-  //   const token = localStorage.getItem('token');
-  //   if (!token) {
-  //     return throwError(() => new Error('No token found'));
-  //   }
-  //
-  //   return this.httpService.get(`${environment.REST_USER}/user/me`).pipe(
-  //     map(user => {
-  //       this.userSubject.next(user);
-  //       return user;
-  //     }),
-  //     catchError(error => throwError(() => error))
-  //   );
-  // }
   getUserDetails(): Observable<User> {
-    return this.httpService.get(`${environment.REST_USER}/user/me`).pipe(
+    const userId = this.getUser()?.id;
+    if (!userId) {
+      return throwError(() => new Error());
+    }
+
+    return this.httpService.get(`${environment.REST_USER}/user/${userId}`).pipe(
       map(user => {
         this.userSubject.next(user);
         return user;
       }),
       catchError(error => {
         console.error('Error fetching user details:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  verifyCurrentPassword(currentPassword: string): Observable<boolean> {
+    const userId = this.getUser()?.id;
+    if (!userId) {
+      return throwError(() => new Error('User ID not found'));
+    }
+
+    return this.httpService.post(AuthService.VERIFY_PASSWORD_ENDPOINT, { userId, currentPassword }).pipe(
+      map(response => response.isValid),
+      catchError(error => {
+        console.error('Error verifying password:', error);
         return throwError(() => error);
       })
     );
