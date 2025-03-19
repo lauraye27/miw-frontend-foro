@@ -1,6 +1,7 @@
-<nav class="navbar navbar-expand-lg" role="navigation">
+<nav class="navbar navbar-expand-lg fixed-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="#" aria-label="CaptuRing Forum Home">CaptuRing Forum</a>
+
     <button
       class="navbar-toggler"
       type="button"
@@ -9,20 +10,23 @@
       aria-controls="navbarNav"
       aria-expanded="false"
       aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon" inert></span>
+    > <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav" role="menubar">
-      <ul class="navbar-nav me-auto" role="menu">
-        <li class="nav-item" role="none">
-          <a class="nav-link" href="#" role="menuitem">Home</a>
+
+    <div class="collapse navbar-collapse custom-navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Home</a>
         </li>
-        <li class="nav-item" role="none">
-          <a class="nav-link" href="#" role="menuitem">Questions</a>
+        <li class="nav-item">
+          <a class="nav-link" href="#" *ngIf="isAuthenticated">My Questions</a>
         </li>
       </ul>
-      <ul class="navbar-nav" role="menu">
-        <li class="nav-item dropdown" *ngIf="isAuthenticated" role="none">
+    </div>
+
+    <div class="user-section">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown" *ngIf="isAuthenticated">
           <a
             class="nav-link dropdown-toggle"
             href="#"
@@ -30,26 +34,20 @@
             role="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
-            aria-haspopup="true"
           >
-            <span class="user-avatar me-2">{{ userNameInitial }}</span>
-            {{ userName }}
+            <span class="user-avatar">{{ userNameInitials }}</span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" role="menu">
-            <li role="none">
-              <a class="dropdown-item" href="/profile" role="menuitem">Profile</a>
-            </li>
-            <li role="separator"><hr class="dropdown-divider" /></li>
-            <li role="none">
-              <a class="dropdown-item" href="#" (click)="logout()" role="menuitem">Logout</a>
-            </li>
+          <ul class="dropdown-menu dropdown-profile">
+            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#" (click)="logout()">Logout</a></li>
           </ul>
         </li>
-        <li class="nav-item" *ngIf="!isAuthenticated" role="none">
-          <a class="nav-link" href="/login" role="menuitem">Login</a>
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <a class="nav-link" href="/login">Login</a>
         </li>
-        <li class="nav-item" *ngIf="!isAuthenticated" role="none">
-          <a class="nav-link" href="/registro" role="menuitem">Register</a>
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <a class="nav-link" href="/registro">Register</a>
         </li>
       </ul>
     </div>
