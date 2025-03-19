@@ -32,7 +32,8 @@ export class ProfileComponent  implements OnInit {
     confirmPassword: false
   };
   showPasswordSection: boolean = false;
-  errorMessage: string = '';
+  errorMessage: string | null = null;
+  successMessage: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -104,7 +105,7 @@ export class ProfileComponent  implements OnInit {
   togglePasswordSection(): void {
     this.showPasswordSection = !this.showPasswordSection;
     if (!this.showPasswordSection) {
-      this.userProfileForm.get('password')?.reset();
+      this.userProfileForm.get('currentPassword')?.reset();
       this.userProfileForm.get('newPassword')?.reset();
       this.userProfileForm.get('confirmPassword')?.reset();
     }
@@ -118,7 +119,7 @@ export class ProfileComponent  implements OnInit {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        password: '',
+        currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
@@ -174,9 +175,14 @@ export class ProfileComponent  implements OnInit {
   private updateUser(updatedUser: any): void {
     this.httpService.put(`${environment.REST_USER}/user/${this.authService.getUser()?.id}`, updatedUser).pipe(
       tap(() => {
-        alert('Changes saved');
+        this.successMessage = 'Changes saved successfully';
+        this.errorMessage = null;
         this.toggleEdit();
         this.loadUserDetails();
+
+        setTimeout(() => {
+          this.successMessage = null;
+        }, 2000);
       }),
       catchError(error => {
         if (error.status === 400) {

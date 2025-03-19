@@ -1,6 +1,14 @@
 <app-navbar></app-navbar>
 
 <div class="container">
+  <div *ngIf="successMessage" class="floating-alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="floating-alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
   <h2>Profile</h2>
 
   <div class="text-end mb-3">
@@ -45,7 +53,7 @@
           <i class="fa-solid" [ngClass]="showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && userProfileForm.get('newPassword').touched">
+      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && !userProfileForm.get('newPassword').untouched">
         <span *ngIf="userProfileForm.get('newPassword')?.errors?.['required']">
           New password is required
         </span>
@@ -68,7 +76,7 @@
           <i class="fa-solid" [ngClass]="showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && userProfileForm.get('confirmPassword')?.touched">
+      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && !userProfileForm.get('confirmPassword')?.untouched">
         Passwords do not match
       </small>
     </div>
@@ -79,8 +87,6 @@
       </button>
       <button type="submit" class="btn btn-primary">Save</button>
     </div>
-
-    <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
 
   </form>
 
