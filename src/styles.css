@@ -1,15 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
-/*.btn-primary {
-    background-color: #007bff;
-    border: none;
-    padding: 10px 20px;
-    transition: background-color 0.3s ease-in-out;
+html, body {
+  height: 100%;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
-}*/
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.container {
+  padding-top: 100px;
+}

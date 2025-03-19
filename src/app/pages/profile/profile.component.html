@@ -1,0 +1,107 @@
+<app-navbar></app-navbar>
+
+<div class="container">
+  <div *ngIf="successMessage" class="floating-alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="floating-alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <h2>Profile</h2>
+
+  <div class="text-end mb-3">
+    <button type="button" class="btn btn-primary" (click)="toggleEdit()">
+      {{ isEditMode ? 'Cancel' : 'Edit' }}
+    </button>
+  </div>
+
+  <form [formGroup]="userProfileForm" (ngSubmit)="saveChanges()" *ngIf="isEditMode">
+    <div class="mb-3">
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" class="form-control" formControlName="firstName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" class="form-control" formControlName="lastName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="email">Email</label>
+      <input type="email" id="email" class="form-control" formControlName="email"  autocomplete="email" required>
+    </div>
+
+    <div class="mb-3" *ngIf="showPasswordSection">
+      <label for="password">Password</label>
+      <div class="input-group">
+        <input type="password" id="password" class="form-control" formControlName="currentPassword" required>
+        <button type="button" class="btn btn-outline-secondary input-group-text"
+          (click)="togglePasswordVisibility('password')">
+          <i class="fa-solid" [ngClass]="showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="mb-3" *ngIf="showPasswordSection">
+      <label for="newPassword">New Password</label>
+      <div class="input-group">
+        <input type="password" id="newPassword" class="form-control" formControlName="newPassword" required>
+        <button type="button" class="btn btn-outline-secondary input-group-text"
+          (click)="togglePasswordVisibility('newPassword')">
+          <i class="fa-solid" [ngClass]="showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
+      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && !userProfileForm.get('newPassword').untouched">
+        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['required']">
+          New password is required
+        </span>
+        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['minlength']">
+          Password must be at least 8 characters long
+        </span>
+
+        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['pattern']">
+          Password must contain at least one letter and one number
+        </span>
+      </small>
+    </div>
+
+    <div class="mb-3" *ngIf="showPasswordSection">
+      <label for="confirmPassword">Confirm New Password</label>
+      <div class="input-group">
+        <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required>
+        <button type="button" class="btn btn-outline-secondary input-group-text"
+                (click)="togglePasswordVisibility('confirmPassword')">
+          <i class="fa-solid" [ngClass]="showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
+      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && !userProfileForm.get('confirmPassword')?.untouched">
+        Passwords do not match
+      </small>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button type="button" class="btn btn-secondary ms-2" (click)="togglePasswordSection()">
+        {{ showPasswordSection ? 'Cancel' : 'Change Password' }}
+      </button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+
+  </form>
+
+  <div *ngIf="!isEditMode" class="user-profile card shadow-sm p-4">
+    <div class="d-flex align-items-center mb-3">
+      <div class="avatar bg-primary text-white d-flex justify-content-center align-items-center">
+        <span class="fs-4">{{ user?.firstName[0] }}{{ user?.lastName[0] }}</span>
+      </div>
+      <h4 class="ms-3">{{ user?.firstName }} {{ user?.lastName }}</h4>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><strong>Email:</strong> {{ user?.email }}</li>
+      <li class="list-group-item"><strong>Password:</strong> <span class="text-muted"> ••••••••</span></li>
+    </ul>
+  </div>
+</div>
+
