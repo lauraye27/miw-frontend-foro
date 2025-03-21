@@ -38,6 +38,7 @@ export class ProfileComponent  implements OnInit {
   constructor(
     private authService: AuthService,
     private httpService: HttpService,
+    private router: Router,
     private fb: FormBuilder
   ) {
     this.userProfileForm = this.fb.group({
@@ -69,12 +70,11 @@ export class ProfileComponent  implements OnInit {
       user => {
         this.user = user;
         this.userProfileForm.patchValue({
-          id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email
         });
-        console.log('User details:', user);
+        console.log('User details (loadUser in profile):', user);
       },
       error => {
         console.error('Error fetching user details:', error);
@@ -94,12 +94,21 @@ export class ProfileComponent  implements OnInit {
     return newPassword === confirmPassword ? null : { passwordsDontMatch: true };
   }
 
+  // toggleEdit(): void {
+  //   if (this.isEditMode) {
+  //     this.resetForm();
+  //   }
+  //   this.isEditMode = !this.isEditMode;
+  //   this.errorMessage = '';
+  // }
   toggleEdit(): void {
-    if (this.isEditMode) {
+    this.isEditMode = !this.isEditMode;
+    this.errorMessage = null;
+    this.successMessage = null;
+
+    if (!this.isEditMode) {
       this.resetForm();
     }
-    this.isEditMode = !this.isEditMode;
-    this.errorMessage = '';
   }
 
   togglePasswordSection(): void {
@@ -108,12 +117,14 @@ export class ProfileComponent  implements OnInit {
       this.userProfileForm.get('currentPassword')?.reset();
       this.userProfileForm.get('newPassword')?.reset();
       this.userProfileForm.get('confirmPassword')?.reset();
+
+      this.userProfileForm.get('newPassword')?.setErrors(null);
+      this.userProfileForm.get('confirmPassword')?.setErrors(null);
     }
   }
 
   resetForm(): void {
     const user = this.authService.getUser();
-    console.log('Current user:', this.authService.getUser());
     if (user) {
       this.userProfileForm.patchValue({
         firstName: user.firstName,
@@ -172,9 +183,38 @@ export class ProfileComponent  implements OnInit {
     );
   }
 
+  // private updateUser(updatedUser: any): void {
+  //   console.log('Enviando actualización de usuario:', updatedUser);
+  //   this.httpService.put(`${environment.REST_USER}/user/update/${this.authService.getUser()?.id}`, updatedUser).pipe(
+  //     tap(() => {
+  //       console.log('Usuario actualizado exitosamente');
+  //       this.successMessage = 'Changes saved successfully';
+  //       this.errorMessage = null;
+  //       this.toggleEdit();
+  //       this.loadUserDetails();
+  //
+  //       setTimeout(() => {
+  //         this.successMessage = null;
+  //       }, 2000);
+  //     }),
+  //     catchError(error => {
+  //       console.error('Error en la actualización:', error);
+  //       if (error.status === 400) {
+  //         this.errorMessage = 'Validation failed';
+  //       } else {
+  //         this.errorMessage = 'Error updating user';
+  //       }
+  //       return throwError(() => error);
+  //     })
+  //   ).subscribe();
+  // }
+
   private updateUser(updatedUser: any): void {
-    this.httpService.put(`${environment.REST_USER}/user/${this.authService.getUser()?.id}`, updatedUser).pipe(
-      tap(() => {
+    console.log('Enviando actualización de usuario:', updatedUser);
+
+    this.authService.updateUser(updatedUser).subscribe({
+      next: () => {
+        console.log('Usuario actualizado correctamente');
         this.successMessage = 'Changes saved successfully';
         this.errorMessage = null;
         this.toggleEdit();
@@ -183,19 +223,20 @@ export class ProfileComponent  implements OnInit {
         setTimeout(() => {
           this.successMessage = null;
         }, 2000);
-      }),
-      catchError(error => {
-        if (error.status === 400) {
-          this.errorMessage = 'Validation failed';
-        } else {
-          this.errorMessage = 'Error updating user';
-        }
-        return throwError(() => error);
-      })
-    ).subscribe();
+      },
+      error: error => {
+        console.error('Error en la actualización:', error);
+        this.errorMessage = error.status === 400 ? 'Validation failed'
+          : error?.status === 403
+            ? 'No tienes permisos para actualizar esta información'
+            : 'Error updating user';
+      }
+    });
   }
 
   saveChanges(): void {
+    console.log('Guardando cambios...');
+
     const validationResult = this.validateForm();
     if (!validationResult.isValid) {
       this.errorMessage = validationResult.errorMessage;
@@ -204,9 +245,39 @@ export class ProfileComponent  implements OnInit {
 
     const { updatedUser, currentPassword, newPassword } = validationResult.data;
     if (this.showPasswordSection) {
+      console.log('Actualizando usuario con verificación de contraseña...');
       this.updateUserWithPasswordVerification(updatedUser, currentPassword, newPassword);
     } else {
+      console.log('Actualizando usuario sin cambiar contraseña...');
       this.updateUser(updatedUser);
     }
+  }
+
+  openDeleteConfirmation() {
+    const isConfirmed = confirm('Are you sure you want to delete the account? This action cannot be undone');
+    if (isConfirmed) {
+      this.deleteAccount();
+    }
+  }
+
+  deleteAccount() {
+    const userId = this.authService.getUser()?.id;
+    if (!userId) {
+      this.errorMessage = 'Error in getting user';
+      return;
+    }
+
+    this.authService.deleteUser(userId).subscribe(
+      () => {
+        this.authService.logout();
+        this.router.navigate(['/login']).then(() => {
+          this.successMessage = 'Account eliminated successfully';
+        });
+      },
+      error => {
+        console.error('Error deleting account:', error);
+        this.errorMessage = 'An error occurred. Please try again';
+      }
+    );
   }
 }

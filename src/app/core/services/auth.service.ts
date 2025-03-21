@@ -13,9 +13,11 @@ import {HttpHeaders} from '@angular/common/http';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  static readonly LOGIN_ENDPOINT = environment.REST_USER + '/user/login';
-  static readonly VERIFY_PASSWORD_ENDPOINT = environment.REST_USER + '/user/verifyPassword';
-  static readonly REGISTER_ENDPOINT = environment.REST_USER + '/user/register';
+  static readonly USER = '/user';
+  static readonly USER_ENDPOINT = environment.REST_USER + AuthService.USER;
+  static readonly LOGIN_ENDPOINT = AuthService.USER_ENDPOINT + '/login';
+  static readonly VERIFY_PASSWORD_ENDPOINT = AuthService.USER_ENDPOINT + '/verifyPassword';
+  static readonly REGISTER_ENDPOINT = AuthService.USER_ENDPOINT + '/register';
 
   private readonly userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
@@ -27,16 +29,17 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string): Observable<User> {
+  login(email: string, password: string): Observable<any> {
     return this.httpService.post(AuthService.LOGIN_ENDPOINT, { email, password }).pipe(
-      switchMap(jsonToken => {
-        localStorage.setItem('token', jsonToken.token);
-        this.setUserFromToken(jsonToken.token);
-
-        return this.getUserDetails();
+      tap((response: any) => {
+        const token = response.token;
+        localStorage.setItem('token', token);
+        this.setUserFromToken(token);
       }),
-      tap(user => this.userSubject.next(user)),
-      catchError(error => throwError(() => error))
+      catchError((error) => {
+        console.error('Login failed:', error);
+        return throwError(() => error);
+      })
     );
   }
 
@@ -90,7 +93,9 @@ export class AuthService {
   }
 
   getToken(): string {
-    return this.userSubject.value ? this.userSubject.value.token : undefined;
+    const token = localStorage.getItem('token');
+    console.log('Obteniendo token en auth.service:', token);
+    return token;
   }
 
   getUser(): User | null {
@@ -99,6 +104,11 @@ export class AuthService {
 
   private setUserFromToken(token: string) {
     const decodedToken = this.jwtHelper.decodeToken(token);
+    if (!decodedToken || !decodedToken.id) {
+      console.error('Invalid token:', decodedToken);
+      return;
+    }
+
     const user: User = {
       id: decodedToken.id,
       firstName: decodedToken.firstName,
@@ -108,15 +118,16 @@ export class AuthService {
       token: token
     };
     this.userSubject.next(user);
+    console.log('User set from token:', user);
   }
 
   getUserDetails(): Observable<User> {
-    const userId = this.getUser()?.id;
-    if (!userId) {
+    const user = this.getUser();
+    if (!user || !user.id) {
       return throwError(() => new Error());
     }
 
-    return this.httpService.get(`${environment.REST_USER}/user/${userId}`).pipe(
+    return this.httpService.get(`${AuthService.USER_ENDPOINT}/${user.id}`).pipe(
       map(user => {
         this.userSubject.next(user);
         return user;
@@ -143,4 +154,27 @@ export class AuthService {
     );
   }
 
+  updateUser(updatedUser: any): Observable<any> {
+    const userId = this.getUser()?.id;
+
+    if (!userId) {
+      return throwError(() => new Error('User ID not found'));
+    }
+    const token = this.getToken();
+    if (!token) {
+      console.error('Error: Token no encontrado');
+      return throwError(() => new Error('User token no encontrado'));
+    }
+
+    return this.httpService.put(`${AuthService.USER_ENDPOINT}/update/${userId}`, updatedUser).pipe(
+      catchError(error => {
+        console.error('Error updating user:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  deleteUser(userId: number): Observable<any> {
+    return this.httpService.delete(`${AuthService.USER_ENDPOINT}/delete/${userId}`);
+  }
 }
