@@ -5,16 +5,18 @@ import { AuthService } from '@core/services/auth.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {NgIf} from '@angular/common';
+import {MessageComponent} from '../../shared/message/message.component';
 
 @Component({
   selector: 'app-login',
-  imports: [NavbarComponent, ReactiveFormsModule, FormsModule, NgIf],
+  imports: [NavbarComponent, ReactiveFormsModule, FormsModule, MessageComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  successMessage: string | null = null;
   errorMessage: string | null = null;
 
   constructor(private router: Router, private authService: AuthService, private readonly dialog: MatDialog) {}
@@ -39,6 +41,7 @@ export class LoginComponent {
         } else {
           this.errorMessage = 'An unexpected error occurred. Please try again';
         }
+        this.successMessage = null;
       },
     });
   }

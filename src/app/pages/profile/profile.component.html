@@ -1,14 +1,10 @@
 <app-navbar></app-navbar>
+<app-message
+        [successMessage]="successMessage"
+        [errorMessage]="errorMessage"
+></app-message>
 
 <div class="container">
-  <div *ngIf="successMessage" class="floating-alert alert-success">
-    {{ successMessage }}
-  </div>
-
-  <div *ngIf="errorMessage" class="floating-alert alert-danger">
-    {{ errorMessage }}
-  </div>
-
   <h2>Profile</h2>
 
   <div class="text-end mb-3">

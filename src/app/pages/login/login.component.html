@@ -4,9 +4,10 @@
   <div class="card shadow-lg p-4" style="width: 350px; border-radius: 12px">
     <h2 class="text-center mb-4">Log in</h2>
 
-    <div *ngIf="errorMessage" class="alert alert-danger text-center">
-      {{ errorMessage }}
-    </div>
+    <app-message
+      [successMessage]="successMessage"
+      [errorMessage]="errorMessage"
+    ></app-message>
 
     <form (ngSubmit)="login()">
       <div class="mb-3">

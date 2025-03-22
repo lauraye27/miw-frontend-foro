@@ -9,15 +9,17 @@ import {NgClass, NgIf} from '@angular/common';
 import {filter, take, tap, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {User} from '@core/models/user.model';
+import {MessageComponent} from "../../shared/message/message.component";
 
 @Component({
   selector: 'app-profile',
-  imports: [
-    ReactiveFormsModule,
-    NavbarComponent,
-    NgIf,
-    NgClass
-  ],
+    imports: [
+        ReactiveFormsModule,
+        NavbarComponent,
+        NgIf,
+        NgClass,
+        MessageComponent
+    ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -35,23 +37,19 @@ export class ProfileComponent  implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
-  constructor(
-    private authService: AuthService,
-    private httpService: HttpService,
-    private router: Router,
-    private fb: FormBuilder
-  ) {
-    this.userProfileForm = this.fb.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      currentPassword: [''],
-      newPassword: ['', [
-        Validators.minLength(8),
-        Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
-      ]],
-      confirmPassword: ['']
-    }, {
+  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {
+    this.userProfileForm = this.fb.group(
+        {
+          firstName: ['', Validators.required],
+          lastName: ['', Validators.required],
+          email: ['', [Validators.required, Validators.email]],
+          currentPassword: [''],
+          newPassword: ['', [
+            Validators.minLength(8),
+            Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/),
+          ]],
+          confirmPassword: ['']
+        }, {
       validators: this.passwordMatchValidator
     });
   }
@@ -94,13 +92,6 @@ export class ProfileComponent  implements OnInit {
     return newPassword === confirmPassword ? null : { passwordsDontMatch: true };
   }
 
-  // toggleEdit(): void {
-  //   if (this.isEditMode) {
-  //     this.resetForm();
-  //   }
-  //   this.isEditMode = !this.isEditMode;
-  //   this.errorMessage = '';
-  // }
   toggleEdit(): void {
     this.isEditMode = !this.isEditMode;
     this.errorMessage = null;
@@ -182,32 +173,6 @@ export class ProfileComponent  implements OnInit {
       }
     );
   }
-
-  // private updateUser(updatedUser: any): void {
-  //   console.log('Enviando actualización de usuario:', updatedUser);
-  //   this.httpService.put(`${environment.REST_USER}/user/update/${this.authService.getUser()?.id}`, updatedUser).pipe(
-  //     tap(() => {
-  //       console.log('Usuario actualizado exitosamente');
-  //       this.successMessage = 'Changes saved successfully';
-  //       this.errorMessage = null;
-  //       this.toggleEdit();
-  //       this.loadUserDetails();
-  //
-  //       setTimeout(() => {
-  //         this.successMessage = null;
-  //       }, 2000);
-  //     }),
-  //     catchError(error => {
-  //       console.error('Error en la actualización:', error);
-  //       if (error.status === 400) {
-  //         this.errorMessage = 'Validation failed';
-  //       } else {
-  //         this.errorMessage = 'Error updating user';
-  //       }
-  //       return throwError(() => error);
-  //     })
-  //   ).subscribe();
-  // }
 
   private updateUser(updatedUser: any): void {
     console.log('Enviando actualización de usuario:', updatedUser);
