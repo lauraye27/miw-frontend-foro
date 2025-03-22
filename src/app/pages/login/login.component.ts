@@ -17,24 +17,30 @@ export class LoginComponent {
   password: string = '';
   errorMessage: string | null = null;
 
-  constructor(private router: Router, private authService: AuthService, private readonly dialog: MatDialog) {
-  }
+  constructor(private router: Router, private authService: AuthService, private readonly dialog: MatDialog) {}
 
   login() {
     this.errorMessage = null;
-    this.authService.login(this.email, this.password).subscribe(
-      () => {
+
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
         if (this.authService.isAuthenticated()) {
           this.router.navigate(['/']).then().finally(() => this.dialog.closeAll());
         } else {
-          this.errorMessage = 'Error credentials';
+          this.errorMessage = 'Authentication failed. Please try again';
         }
       },
-      error => {
-        console.error('Login error:', error);
-        this.errorMessage = 'Invalid credentials. Please try again';
-      }
-    );
+      error: (err) => {
+        console.error('Login error:', err);
+        if (err.status === 401) {
+          this.errorMessage = 'Invalid email or password';
+        } else if (err.status === 404) {
+          this.errorMessage = 'Email not valid';
+        } else {
+          this.errorMessage = 'An unexpected error occurred. Please try again';
+        }
+      },
+    });
   }
 }
 
