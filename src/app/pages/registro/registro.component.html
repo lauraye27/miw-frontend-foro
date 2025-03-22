@@ -2,66 +2,66 @@
 
 <div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
   <div class="card shadow-lg p-4" style="width: 400px; border-radius: 12px">
-    <h2 class="text-center mb-4">Register</h2>
-    <form (ngSubmit)="register()">
+    <h2 class="text-center mb-4">
+      Sign up
+    </h2>
+
+    <div *ngIf="successMessage" class="floating-alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="floating-alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
       <div class="mb-3">
         <label for="firstName" class="form-label">First Name</label>
-        <input
-          type="text"
-          id="firstName"
-          class="form-control"
-          placeholder="First name"
-          [(ngModel)]="firstName" name="firstName"
-          required
-        />
+        <input type="text" id="firstName" class="form-control" placeholder="First name" formControlName="firstName" required/>
+        <small class="text-danger" *ngIf="registerForm.get('firstName')?.invalid && !(registerForm.get('firstName')?.untouched || registerForm.get('firstName')?.dirty)">
+          First name is required
+        </small>
       </div>
 
       <div class="mb-3">
         <label for="lastName" class="form-label">Last Name</label>
-        <input
-          type="text"
-          id="lastName"
-          class="form-control"
-          placeholder="Last name"
-          [(ngModel)]="lastName" name="lastName"
-          required
-        />
+        <input type="text" id="lastName" class="form-control" placeholder="Last name" formControlName="lastName" required/>
+        <small class="text-danger" *ngIf="registerForm.get('lastName')?.invalid && !(registerForm.get('lastName')?.untouched || registerForm.get('lastName')?.dirty)">
+          Last name is required
+        </small>
       </div>
 
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input
-          type="email"
-          id="email"
-          class="form-control"
-          [(ngModel)]="email" name="email"
-          required
-        />
+        <input type="email" id="email" class="form-control" placeholder="example@example.com" formControlName="email" required/>
+        <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['required'] && !(registerForm.get('email')?.untouched || registerForm.get('email')?.dirty)">
+          Email is required
+        </small>
+        <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['email'] && !(registerForm.get('email')?.untouched || registerForm.get('email')?.dirty)">
+          Invalid email format
+        </small>
       </div>
 
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input
-          type="password"
-          id="password"
-          class="form-control"
-          placeholder="8+ characters (at least 1 letter & 1 number)"
-          [(ngModel)]="password" name="password"
-          required
-        />
+        <input type="password" id="password" class="form-control" placeholder="8+ characters (at least 1 letter & 1 number)" formControlName="password" required/>
+        <small class="text-danger" *ngIf=" registerForm.get('password')?.errors?.['required'] && !(registerForm.get('password')?.untouched || registerForm.get('password')?.dirty)">
+          Password is required
+        </small>
+        <small class="text-danger" *ngIf="registerForm.get('password')?.errors?.['minlength'] && !(registerForm.get('password')?.untouched || registerForm.get('password')?.dirty)">
+          Password must be at least 8 characters long
+        </small>
+        <small class="text-danger" *ngIf="registerForm.get('password')?.errors?.['pattern'] && !(registerForm.get('password')?.untouched || registerForm.get('password')?.dirty)">
+          Password must contain at least one letter and one number
+        </small>
       </div>
 
       <div class="mb-3">
-        <label for="confirmPassword" class="form-label"
-        >Confirm password</label
-        >
-        <input
-          type="password"
-          id="confirmPassword"
-          class="form-control"
-          [(ngModel)]="confirmPassword" name="confirmPassword"
-          required
-        />
+        <label for="confirmPassword" class="form-label">Confirm password</label>
+        <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required/>
+        <small class="text-danger" *ngIf="registerForm.errors?.['mismatch'] && !(registerForm.get('confirmPassword')?.untouched || registerForm.get('confirmPassword')?.dirty)">
+          Passwords do not match
+        </small>
       </div>
 
       <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">
@@ -69,8 +69,9 @@
       </button>
 
       <div class="text-center mt-3">
+        Already have an account?
         <a href="/login" class="text-decoration-none text-muted">
-          Already have an account? Log in
+          Log in
         </a>
       </div>
     </form>
