@@ -12,6 +12,8 @@ import {FormsModule} from '@angular/forms';
 export class RegistroComponent {
   firstName: string = '';
   lastName: string = '';
+  address: string = '';
+  phone: string = '';
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
@@ -27,6 +29,8 @@ export class RegistroComponent {
     const user = {
       firstName: this.firstName,
       lastName: this.lastName,
+      address: this.address,
+      phone: this.phone,
       email: this.email,
       password: this.password,
     };

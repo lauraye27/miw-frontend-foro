@@ -3,11 +3,9 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {AuthService} from '@core/services/auth.service';
 import {HttpService} from '@core/services/http.service';
 import {Router} from '@angular/router';
-import {environment} from '@env';
 import {NavbarComponent} from '../../navbar/navbar.component';
 import {NgClass, NgIf} from '@angular/common';
-import {filter, take, tap, throwError} from 'rxjs';
-import {catchError} from 'rxjs/operators';
+import {filter, take} from 'rxjs';
 import {User} from '@core/models/user.model';
 
 @Component({
@@ -44,6 +42,8 @@ export class ProfileComponent  implements OnInit {
     this.userProfileForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
+      address: [''],
+      phone: [''],
       email: ['', [Validators.required, Validators.email]],
       currentPassword: [''],
       newPassword: ['', [
@@ -72,6 +72,8 @@ export class ProfileComponent  implements OnInit {
         this.userProfileForm.patchValue({
           firstName: user.firstName,
           lastName: user.lastName,
+          address: user.address,
+          phone: user.phone,
           email: user.email
         });
         console.log('User details (loadUser in profile):', user);
@@ -129,6 +131,8 @@ export class ProfileComponent  implements OnInit {
       this.userProfileForm.patchValue({
         firstName: user.firstName,
         lastName: user.lastName,
+        address: user.address,
+        phone: user.phone,
         email: user.email,
         currentPassword: '',
         newPassword: '',
@@ -149,8 +153,8 @@ export class ProfileComponent  implements OnInit {
         errorMessage: 'Please check the fields'
       };
     }
-    const { firstName, lastName, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
-    const updatedUser: any = { firstName, lastName, email };
+    const { firstName, lastName, address, phone, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
+    const updatedUser: any = { firstName, lastName, address, phone, email };
     if (this.showPasswordSection) {
       if (!currentPassword || !newPassword || newPassword !== confirmPassword) {
         return {
