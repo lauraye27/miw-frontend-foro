@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {BehaviorSubject, Observable, switchMap, tap, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, tap, throwError} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 
@@ -8,7 +8,6 @@ import {HttpService} from '@core/services/http.service';
 import {environment} from '@env';
 import {User} from '@core/models/user.model';
 import {Role} from '@core/models/role.model';
-import {HttpHeaders} from '@angular/common/http';
 
 
 @Injectable({providedIn: 'root'})
@@ -43,7 +42,7 @@ export class AuthService {
     );
   }
 
-  register(user: { firstName: string; lastName: string; email: string; password: string }): Observable<any> {
+  register(user: { firstName: string; lastName: string; userName: string; phone: string; email: string; password: string }): Observable<any> {
     return this.httpService
       .post(AuthService.REGISTER_ENDPOINT, user)
       .pipe(
@@ -113,6 +112,8 @@ export class AuthService {
       id: decodedToken.id,
       firstName: decodedToken.firstName,
       lastName: decodedToken.lastName,
+      userName: decodedToken.userName,
+      phone: decodedToken.phone,
       email: decodedToken.email,
       role: decodedToken.role,
       token: token

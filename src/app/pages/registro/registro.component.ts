@@ -22,6 +22,8 @@ export class RegistroComponent {
       {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
+        userName: [''],
+        phone: [''],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [
             Validators.required,
@@ -44,6 +46,8 @@ export class RegistroComponent {
     const user = {
       firstName: this.registerForm.value.firstName,
       lastName: this.registerForm.value.lastName,
+      userName: this.registerForm.value.userName,
+      phone: this.registerForm.value.phone,
       email: this.registerForm.value.email,
       password: this.registerForm.value.password,
     };
@@ -53,7 +57,7 @@ export class RegistroComponent {
         console.log(response);
         this.errorMessage = null;
         this.registerForm.reset();
-        this.successMessage = 'Registration successful...';
+        this.successMessage = 'Registration successful';
         setTimeout(() => {
           this.router.navigate(['/login']).then();
         }, 2000);

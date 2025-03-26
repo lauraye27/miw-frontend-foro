@@ -28,6 +28,19 @@
       </div>
 
       <div class="mb-3">
+        <label for="userName" class="form-label">Username</label>
+        <input type="text" id="userName" class="form-control" placeholder="Username" formControlName="userName" required />
+        <small class="text-danger" *ngIf="registerForm.get('userName')?.invalid && !(registerForm.get('userName')?.untouched || registerForm.get('userName')?.dirty)">
+          Username is required
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone</label>
+        <input type="text" id="phone" class="form-control" placeholder="Phone number" formControlName="phone"/>
+      </div>
+
+      <div class="mb-3">
         <label for="email" class="form-label">Email</label>
         <input type="email" id="email" class="form-control" placeholder="example@example.com" formControlName="email" required/>
         <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['required'] && !(registerForm.get('email')?.untouched || registerForm.get('email')?.dirty)">
@@ -61,7 +74,7 @@
       </div>
 
       <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">
-        Register
+        Sign up
       </button>
 
       <div class="text-center mt-3">

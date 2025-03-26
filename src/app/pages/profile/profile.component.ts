@@ -6,20 +6,19 @@ import {Router} from '@angular/router';
 import {environment} from '@env';
 import {NavbarComponent} from '../../navbar/navbar.component';
 import {NgClass, NgIf} from '@angular/common';
-import {filter, take, tap, throwError} from 'rxjs';
-import {catchError} from 'rxjs/operators';
+import {filter, take} from 'rxjs';
 import {User} from '@core/models/user.model';
 import {MessageComponent} from "../../shared/message/message.component";
 
 @Component({
   selector: 'app-profile',
-    imports: [
-        ReactiveFormsModule,
-        NavbarComponent,
-        NgIf,
-        NgClass,
-        MessageComponent
-    ],
+  imports: [
+    ReactiveFormsModule,
+    NavbarComponent,
+    NgIf,
+    NgClass,
+    MessageComponent
+  ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -42,6 +41,8 @@ export class ProfileComponent  implements OnInit {
         {
           firstName: ['', Validators.required],
           lastName: ['', Validators.required],
+          userName: [''],
+          phone: [''],
           email: ['', [Validators.required, Validators.email]],
           currentPassword: [''],
           newPassword: ['', [
@@ -70,6 +71,8 @@ export class ProfileComponent  implements OnInit {
         this.userProfileForm.patchValue({
           firstName: user.firstName,
           lastName: user.lastName,
+          userName: user.userName,
+          phone: user.phone,
           email: user.email
         });
         console.log('User details (loadUser in profile):', user);
@@ -120,6 +123,8 @@ export class ProfileComponent  implements OnInit {
       this.userProfileForm.patchValue({
         firstName: user.firstName,
         lastName: user.lastName,
+        userName: user.userName,
+        phone: user.phone,
         email: user.email,
         currentPassword: '',
         newPassword: '',
@@ -140,8 +145,8 @@ export class ProfileComponent  implements OnInit {
         errorMessage: 'Please check the fields'
       };
     }
-    const { firstName, lastName, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
-    const updatedUser: any = { firstName, lastName, email };
+    const { firstName, lastName, userName, phone, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
+    const updatedUser: any = { firstName, lastName, userName, phone, email };
     if (this.showPasswordSection) {
       if (!currentPassword || !newPassword || newPassword !== confirmPassword) {
         return {
