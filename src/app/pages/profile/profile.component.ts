@@ -42,7 +42,7 @@ export class ProfileComponent  implements OnInit {
     this.userProfileForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      address: [''],
+      userName: [''],
       phone: [''],
       email: ['', [Validators.required, Validators.email]],
       currentPassword: [''],
@@ -72,7 +72,7 @@ export class ProfileComponent  implements OnInit {
         this.userProfileForm.patchValue({
           firstName: user.firstName,
           lastName: user.lastName,
-          address: user.address,
+          userName: user.userName,
           phone: user.phone,
           email: user.email
         });
@@ -131,7 +131,7 @@ export class ProfileComponent  implements OnInit {
       this.userProfileForm.patchValue({
         firstName: user.firstName,
         lastName: user.lastName,
-        address: user.address,
+        userName: user.userName,
         phone: user.phone,
         email: user.email,
         currentPassword: '',
@@ -153,8 +153,8 @@ export class ProfileComponent  implements OnInit {
         errorMessage: 'Please check the fields'
       };
     }
-    const { firstName, lastName, address, phone, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
-    const updatedUser: any = { firstName, lastName, address, phone, email };
+    const { firstName, lastName, userName, phone, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
+    const updatedUser: any = { firstName, lastName, userName, phone, email };
     if (this.showPasswordSection) {
       if (!currentPassword || !newPassword || newPassword !== confirmPassword) {
         return {

@@ -12,7 +12,7 @@ import {FormsModule} from '@angular/forms';
 export class RegistroComponent {
   firstName: string = '';
   lastName: string = '';
-  address: string = '';
+  userName: string = '';
   phone: string = '';
   email: string = '';
   password: string = '';
@@ -29,7 +29,7 @@ export class RegistroComponent {
     const user = {
       firstName: this.firstName,
       lastName: this.lastName,
-      address: this.address,
+      userName: this.userName,
       phone: this.phone,
       email: this.email,
       password: this.password,

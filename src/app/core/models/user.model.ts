@@ -5,7 +5,7 @@ export interface User {
   token: string;
   firstName?: string;
   lastName?: string;
-  address?: string;
+  userName?: string;
   phone?: string;
   email?: string;
   password?: string;

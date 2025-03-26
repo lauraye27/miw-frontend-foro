@@ -42,7 +42,7 @@ export class AuthService {
     );
   }
 
-  register(user: { firstName: string; lastName: string; address: string; phone: string; email: string; password: string }): Observable<any> {
+  register(user: { firstName: string; lastName: string; userName: string; phone: string; email: string; password: string }): Observable<any> {
     return this.httpService
       .post(AuthService.REGISTER_ENDPOINT, user)
       .pipe(
@@ -112,7 +112,7 @@ export class AuthService {
       id: decodedToken.id,
       firstName: decodedToken.firstName,
       lastName: decodedToken.lastName,
-      address: decodedToken.address,
+      userName: decodedToken.userName,
       phone: decodedToken.phone,
       email: decodedToken.email,
       role: decodedToken.role,
