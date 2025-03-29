@@ -9,7 +9,7 @@ import {MessageComponent} from '../../shared/message/message.component';
 
 @Component({
   selector: 'app-login',
-  imports: [NavbarComponent, ReactiveFormsModule, FormsModule, MessageComponent],
+  imports: [NavbarComponent, ReactiveFormsModule, FormsModule, MessageComponent, NgIf],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -24,18 +24,20 @@ export class LoginComponent {
   login() {
     this.errorMessage = null;
 
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Please fill in all fields';
+      return;
+    }
+
     this.authService.login(this.email, this.password).subscribe({
       next: () => {
         if (this.authService.isAuthenticated()) {
           this.router.navigate(['/']).then().finally(() => this.dialog.closeAll());
-        } else {
-          this.errorMessage = 'Authentication failed. Please try again';
         }
       },
       error: (err) => {
-        console.error('Login error:', err);
         if (err.status === 401) {
-          this.errorMessage = 'Invalid email or password';
+          this.errorMessage = 'Incorrect password';
         } else if (err.status === 404) {
           this.errorMessage = 'Email not valid';
         } else {

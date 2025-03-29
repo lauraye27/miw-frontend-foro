@@ -36,7 +36,6 @@ export class AuthService {
         this.setUserFromToken(token);
       }),
       catchError((error) => {
-        console.error('Login failed:', error);
         return throwError(() => error);
       })
     );
@@ -112,8 +111,6 @@ export class AuthService {
       id: decodedToken.id,
       firstName: decodedToken.firstName,
       lastName: decodedToken.lastName,
-      userName: decodedToken.userName,
-      phone: decodedToken.phone,
       email: decodedToken.email,
       role: decodedToken.role,
       token: token

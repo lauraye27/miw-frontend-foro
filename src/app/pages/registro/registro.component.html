@@ -12,26 +12,30 @@
 
     <form [formGroup]="registerForm" (ngSubmit)="register()">
       <div class="mb-3">
-        <label for="firstName" class="form-label">First Name</label>
+        <label for="firstName" class="form-label">First Name *</label>
         <input type="text" id="firstName" class="form-control" placeholder="First name" formControlName="firstName" required/>
-        <small class="text-danger" *ngIf="registerForm.get('firstName')?.invalid && !(registerForm.get('firstName')?.untouched || registerForm.get('firstName')?.dirty)">
+        <small class="text-danger" *ngIf="registerForm.get('firstName')?.invalid && (formUtils.isTouched(registerForm,'firstName') || registerForm.get('firstName')?.dirty)">
           First name is required
         </small>
       </div>
 
       <div class="mb-3">
-        <label for="lastName" class="form-label">Last Name</label>
+        <label for="lastName" class="form-label">Last Name *</label>
         <input type="text" id="lastName" class="form-control" placeholder="Last name" formControlName="lastName" required/>
-        <small class="text-danger" *ngIf="registerForm.get('lastName')?.invalid && !(registerForm.get('lastName')?.untouched || registerForm.get('lastName')?.dirty)">
+        <small class="text-danger" *ngIf="registerForm.get('lastName')?.invalid && (formUtils.isTouched(registerForm,'lastName') || registerForm.get('lastName')?.dirty)">
           Last name is required
         </small>
       </div>
 
       <div class="mb-3">
-        <label for="userName" class="form-label">Username</label>
+        <label for="userName" class="form-label">Username *</label>
         <input type="text" id="userName" class="form-control" placeholder="Username" formControlName="userName" required />
-        <small class="text-danger" *ngIf="registerForm.get('userName')?.invalid && !(registerForm.get('userName')?.untouched || registerForm.get('userName')?.dirty)">
+        <small class="text-danger" *ngIf="registerForm.get('userName')?.invalid && (formUtils.isTouched(registerForm,'userName') || registerForm.get('userName')?.dirty)">
           Username is required
+        </small>
+        <small class="text-danger" *ngIf="errorMessage?.includes('username') && (formUtils.isTouched(registerForm,'userName') || registerForm.get('userName')?.dirty)">
+        <!--formUtils.isPristine(registerForm,'userName')">-->
+          The username is already taken
         </small>
       </div>
 
@@ -41,34 +45,38 @@
       </div>
 
       <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
+        <label for="email" class="form-label">Email *</label>
         <input type="email" id="email" class="form-control" placeholder="example@example.com" formControlName="email" required/>
-        <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['required'] && !(registerForm.get('email')?.untouched || registerForm.get('email')?.dirty)">
+        <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['required'] && (formUtils.isTouched(registerForm,'email') || registerForm.get('email')?.dirty)">
           Email is required
         </small>
-        <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['email'] && !(registerForm.get('email')?.untouched || registerForm.get('email')?.dirty)">
+        <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['email'] && (formUtils.isTouched(registerForm,'email') || registerForm.get('email')?.dirty)">
           Invalid email format
         </small>
+        <small class="text-danger" *ngIf="errorMessage?.includes('email') && (formUtils.isTouched(registerForm,'email') || registerForm.get('email')?.dirty)">
+        <!--formUtils.isPristine(registerForm,'email')">-->
+          The email is already registered
+        </small>
       </div>
 
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" class="form-control" placeholder="8+ characters (at least 1 letter & 1 number)" formControlName="password" required/>
-        <small class="text-danger" *ngIf=" registerForm.get('password')?.errors?.['required'] && !(registerForm.get('password')?.untouched || registerForm.get('password')?.dirty)">
+        <label for="password" class="form-label">Password *</label>
+        <input type="password" id="password" class="form-control" placeholder="8+ characters (uppercase, lowercase, number & special character)" formControlName="password" required/>
+        <small class="text-danger" *ngIf=" registerForm.get('password')?.errors?.['required'] && (formUtils.isTouched(registerForm,'password') || registerForm.get('password')?.dirty)">
           Password is required
         </small>
-        <small class="text-danger" *ngIf="registerForm.get('password')?.errors?.['minlength'] && !(registerForm.get('password')?.untouched || registerForm.get('password')?.dirty)">
+        <small class="text-danger" *ngIf="registerForm.get('password')?.errors?.['minlength'] && (formUtils.isTouched(registerForm,'password')|| registerForm.get('password')?.dirty)">
           Password must be at least 8 characters long
         </small>
-        <small class="text-danger" *ngIf="registerForm.get('password')?.errors?.['pattern'] && !(registerForm.get('password')?.untouched || registerForm.get('password')?.dirty)">
-          Password must contain at least one letter and one number
+        <small class="text-danger" *ngIf="registerForm.get('password')?.errors?.['pattern'] && (formUtils.isTouched(registerForm,'password') || registerForm.get('password')?.dirty)">
+          Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (&#64;$!%*?&)
         </small>
       </div>
 
       <div class="mb-3">
-        <label for="confirmPassword" class="form-label">Confirm password</label>
+        <label for="confirmPassword" class="form-label">Confirm password *</label>
         <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required/>
-        <small class="text-danger" *ngIf="registerForm.errors?.['mismatch'] && !(registerForm.get('confirmPassword')?.untouched || registerForm.get('confirmPassword')?.dirty)">
+        <small class="text-danger" *ngIf="registerForm.errors?.['mismatch'] && (formUtils.isTouched(registerForm,'confirmPassword') || registerForm.get('confirmPassword')?.dirty)">
           Passwords do not match
         </small>
       </div>

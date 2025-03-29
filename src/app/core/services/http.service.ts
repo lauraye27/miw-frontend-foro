@@ -15,8 +15,8 @@ export class HttpService {
   private headers: HttpHeaders;
   private params: HttpParams;
   private responseType: string;
-  private successfulNotification = undefined;
-  private errorNotification = undefined;
+  private successfulMessage = undefined;
+  private errorMessage = undefined;
 
   constructor(private readonly http: HttpClient, private readonly snackBar: MatSnackBar, private readonly router: Router) {
     this.resetOptions();
@@ -36,12 +36,12 @@ export class HttpService {
   }
 
   successful(notification = 'Successful'): this {
-    this.successfulNotification = notification;
+    this.successfulMessage = notification;
     return this;
   }
 
   error(notification: string): this {
-    this.errorNotification = notification;
+    this.errorMessage = notification;
     return this;
   }
 
@@ -124,11 +124,11 @@ export class HttpService {
   }
 
   private extractData(response): any {
-    if (this.successfulNotification) {
-      this.snackBar.open(this.successfulNotification, '', {
+    if (this.successfulMessage) {
+      this.snackBar.open(this.successfulMessage, '', {
         duration: 2000
       });
-      this.successfulNotification = undefined;
+      this.successfulMessage = undefined;
     }
     const contentType = response.headers.get('content-type');
     if (contentType) {
@@ -144,33 +144,35 @@ export class HttpService {
   }
 
   private showError(notification: string): void {
-    if (this.errorNotification) {
-      this.snackBar.open(this.errorNotification, 'Error', {duration: 5000});
-      this.errorNotification = undefined;
-    } else {
-      this.snackBar.open(notification, 'Error', {duration: 5000});
-    }
+    this.errorMessage = notification;
   }
 
-  private handleError(response): any {
-    let error: AppError;
-    if (response.status === HttpService.UNAUTHORIZED) {
+  private handleError(response: any): Observable<any> {
+    let errorMessage = 'An unexpected error occurred';
+    const status = response?.status || null;
+
+    if (status === HttpService.UNAUTHORIZED) {
       this.showError('Unauthorized');
-      this.router.navigate(['']).then();
+    } else if (status === HttpService.CONNECTION_REFUSE) {
+      this.showError('Connection Refused');
       return EMPTY;
-    } else if (response.status === HttpService.CONNECTION_REFUSE) {
-      this.showError('Connection Refuse');
-      return EMPTY;
-    } else {
-      try {
-        error = response.error; // with 'text': JSON.parse(response.error);
-        this.showError(error.error + ' (' + response.status + '): ' + error.message);
-        return throwError(() => error);
-      } catch (e) {
-        this.showError('Not response');
-        return throwError(() => response.error);
-      }
+    } else if (status === 400) {
+      errorMessage = 'Invalid data provided';
+    } else if (status === 409) {
+      const errorMsg = response.error?.message;
+        if (errorMsg.toLowerCase().includes('email')) {
+          errorMessage = 'The email is already registered';
+        } else if (errorMsg.toLowerCase().includes('username')) {
+          errorMessage = 'The username is already taken';
+        } else {
+          errorMessage = 'A conflict occurred, please check your data';
+        }
+    } else if (status === 500) {
+      errorMessage = 'A server error occurred. Please try again later';
     }
+
+    this.showError(errorMessage + ` (${status})`);
+    return throwError(() => response);
   }
 
 }

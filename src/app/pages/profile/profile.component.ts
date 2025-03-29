@@ -1,14 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '@core/services/auth.service';
-import {HttpService} from '@core/services/http.service';
 import {Router} from '@angular/router';
-import {environment} from '@env';
 import {NavbarComponent} from '../../navbar/navbar.component';
 import {NgClass, NgIf} from '@angular/common';
 import {filter, take} from 'rxjs';
 import {User} from '@core/models/user.model';
 import {MessageComponent} from "../../shared/message/message.component";
+import { FormUtilsService } from '../../shared/services/form-utils.service';
 
 @Component({
   selector: 'app-profile',
@@ -36,18 +35,19 @@ export class ProfileComponent  implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {
+  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder, public formUtils: FormUtilsService) {
     this.userProfileForm = this.fb.group(
         {
           firstName: ['', Validators.required],
           lastName: ['', Validators.required],
-          userName: [''],
+          userName: ['', Validators.required],
           phone: [''],
           email: ['', [Validators.required, Validators.email]],
           currentPassword: [''],
           newPassword: ['', [
-            Validators.minLength(8),
-            Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/),
+            Validators.minLength(6),
+            Validators.maxLength(12),
+            Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/),
           ]],
           confirmPassword: ['']
         }, {

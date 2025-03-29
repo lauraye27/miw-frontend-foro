@@ -25,8 +25,8 @@
     </div>
 
     <div class="mb-3">
-      <label for="address">Address</label>
-      <input type="text" id="address" class="form-control" formControlName="address">
+      <label for="userName">Username</label>
+      <input type="text" id="userName" class="form-control" formControlName="userName" required>
     </div>
 
     <div class="mb-3">
@@ -48,7 +48,7 @@
           <i class="fa-solid" [ngClass]="showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('currentPassword').invalid && !userProfileForm.get('currentPassword').untouched">
+      <small class="text-danger" *ngIf="userProfileForm.get('currentPassword').invalid && formUtils.isTouched(userProfileForm,'currentPassword')">
         <span *ngIf="userProfileForm.get('currentPassword')?.errors?.['required']">
           Old password is required
         </span>
@@ -64,7 +64,7 @@
           <i class="fa-solid" [ngClass]="showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && !userProfileForm.get('newPassword').untouched">
+      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && formUtils.isTouched(userProfileForm,'newPassword')">
         <span *ngIf="userProfileForm.get('newPassword')?.errors?.['required']">
           New password is required
         </span>
@@ -87,7 +87,7 @@
           <i class="fa-solid" [ngClass]="showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && !userProfileForm.get('confirmPassword')?.untouched">
+      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && formUtils.isTouched(userProfileForm,'confirmPassword')">
         Passwords do not match
       </small>
     </div>
