@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {BehaviorSubject, Observable, switchMap, tap, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, tap, throwError} from 'rxjs';
 import {catchError, map} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 
@@ -8,7 +8,6 @@ import {HttpService} from '@core/services/http.service';
 import {environment} from '@env';
 import {User} from '@core/models/user.model';
 import {Role} from '@core/models/role.model';
-import {HttpHeaders} from '@angular/common/http';
 
 
 @Injectable({providedIn: 'root'})
@@ -37,13 +36,12 @@ export class AuthService {
         this.setUserFromToken(token);
       }),
       catchError((error) => {
-        console.error('Login failed:', error);
         return throwError(() => error);
       })
     );
   }
 
-  register(user: { firstName: string; lastName: string; email: string; password: string }): Observable<any> {
+  register(user: { firstName: string; lastName: string; userName: string; phone: string; email: string; password: string }): Observable<any> {
     return this.httpService
       .post(AuthService.REGISTER_ENDPOINT, user)
       .pipe(
@@ -93,9 +91,7 @@ export class AuthService {
   }
 
   getToken(): string {
-    const token = localStorage.getItem('token');
-    console.log('Obteniendo token en auth.service:', token);
-    return token;
+    return localStorage.getItem('token');
   }
 
   getUser(): User | null {
@@ -118,7 +114,6 @@ export class AuthService {
       token: token
     };
     this.userSubject.next(user);
-    console.log('User set from token:', user);
   }
 
   getUserDetails(): Observable<User> {

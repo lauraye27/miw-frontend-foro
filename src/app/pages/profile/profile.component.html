@@ -1,14 +1,10 @@
 <app-navbar></app-navbar>
+<app-message
+        [successMessage]="successMessage"
+        [errorMessage]="errorMessage"
+></app-message>
 
 <div class="container">
-  <div *ngIf="successMessage" class="floating-alert alert-success">
-    {{ successMessage }}
-  </div>
-
-  <div *ngIf="errorMessage" class="floating-alert alert-danger">
-    {{ errorMessage }}
-  </div>
-
   <h2>Profile</h2>
 
   <div class="text-end mb-3">
@@ -29,6 +25,16 @@
     </div>
 
     <div class="mb-3">
+      <label for="userName">Username</label>
+      <input type="text" id="userName" class="form-control" formControlName="userName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" class="form-control" formControlName="phone">
+    </div>
+
+    <div class="mb-3">
       <label for="email">Email</label>
       <input type="email" id="email" class="form-control" formControlName="email"  autocomplete="email" required>
     </div>
@@ -42,7 +48,7 @@
           <i class="fa-solid" [ngClass]="showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('currentPassword').invalid && !userProfileForm.get('currentPassword').untouched">
+      <small class="text-danger" *ngIf="userProfileForm.get('currentPassword').invalid && formUtils.isTouched(userProfileForm,'currentPassword')">
         <span *ngIf="userProfileForm.get('currentPassword')?.errors?.['required']">
           Old password is required
         </span>
@@ -58,7 +64,7 @@
           <i class="fa-solid" [ngClass]="showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && !userProfileForm.get('newPassword').untouched">
+      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && formUtils.isTouched(userProfileForm,'newPassword')">
         <span *ngIf="userProfileForm.get('newPassword')?.errors?.['required']">
           New password is required
         </span>
@@ -81,7 +87,7 @@
           <i class="fa-solid" [ngClass]="showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && !userProfileForm.get('confirmPassword')?.untouched">
+      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && formUtils.isTouched(userProfileForm,'confirmPassword')">
         Passwords do not match
       </small>
     </div>
@@ -94,6 +100,17 @@
     </div>
 
   </form>
+
+  <ng-template #deleteConfirmationTemplate let-data let-dialogRef="dialogRef">
+    <h2 mat-dialog-title>Confirm Action</h2>
+    <mat-dialog-content>
+      <p>{{ data.message }}</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="dialogRef.close(false)">Cancel</button>
+      <button mat-button color="warn" (click)="dialogRef.close(true)">Delete</button>
+    </mat-dialog-actions>
+  </ng-template>
 
   <div class="text-end mt-3" *ngIf="isEditMode">
     <button type="button" class="btn btn-danger" (click)="openDeleteConfirmation()"> Delete Account </button>
