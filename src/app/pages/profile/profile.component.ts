@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '@core/services/auth.service';
 import {Router} from '@angular/router';
@@ -8,6 +8,8 @@ import {filter, take} from 'rxjs';
 import {User} from '@core/models/user.model';
 import {MessageComponent} from "../../shared/message/message.component";
 import { FormUtilsService } from '../../shared/services/form-utils.service';
+import {MatDialog, MatDialogActions, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-profile',
@@ -16,7 +18,11 @@ import { FormUtilsService } from '../../shared/services/form-utils.service';
     NavbarComponent,
     NgIf,
     NgClass,
-    MessageComponent
+    MessageComponent,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogTitle,
+    MatButton,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -35,7 +41,10 @@ export class ProfileComponent  implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder, public formUtils: FormUtilsService) {
+  @ViewChild('deleteConfirmationTemplate') deleteConfirmationTemplate!: TemplateRef<any>;
+
+  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder,
+              public formUtils: FormUtilsService, protected dialog: MatDialog) {
     this.userProfileForm = this.fb.group(
         {
           firstName: ['', Validators.required],
@@ -75,7 +84,6 @@ export class ProfileComponent  implements OnInit {
           phone: user.phone,
           email: user.email
         });
-        console.log('User details (loadUser in profile):', user);
       },
       error => {
         console.error('Error fetching user details:', error);
@@ -180,11 +188,8 @@ export class ProfileComponent  implements OnInit {
   }
 
   private updateUser(updatedUser: any): void {
-    console.log('Enviando actualización de usuario:', updatedUser);
-
     this.authService.updateUser(updatedUser).subscribe({
       next: () => {
-        console.log('Usuario actualizado correctamente');
         this.successMessage = 'Changes saved successfully';
         this.errorMessage = null;
         this.toggleEdit();
@@ -197,16 +202,12 @@ export class ProfileComponent  implements OnInit {
       error: error => {
         console.error('Error en la actualización:', error);
         this.errorMessage = error.status === 400 ? 'Validation failed'
-          : error?.status === 403
-            ? 'No tienes permisos para actualizar esta información'
-            : 'Error updating user';
+          : error?.status === 403 ? 'Permission denied' : 'Error updating user';
       }
     });
   }
 
   saveChanges(): void {
-    console.log('Guardando cambios...');
-
     const validationResult = this.validateForm();
     if (!validationResult.isValid) {
       this.errorMessage = validationResult.errorMessage;
@@ -215,19 +216,25 @@ export class ProfileComponent  implements OnInit {
 
     const { updatedUser, currentPassword, newPassword } = validationResult.data;
     if (this.showPasswordSection) {
-      console.log('Actualizando usuario con verificación de contraseña...');
       this.updateUserWithPasswordVerification(updatedUser, currentPassword, newPassword);
     } else {
-      console.log('Actualizando usuario sin cambiar contraseña...');
       this.updateUser(updatedUser);
     }
   }
 
   openDeleteConfirmation() {
-    const isConfirmed = confirm('Are you sure you want to delete the account? This action cannot be undone');
-    if (isConfirmed) {
-      this.deleteAccount();
-    }
+    const dialogRef = this.dialog.open(this.deleteConfirmationTemplate, {
+      width: '400px',
+      data: {
+        message: 'Are you sure you want to delete the account? This action cannot be undone'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((isConfirmed: boolean) => {
+      if (isConfirmed) {
+        this.deleteAccount();
+      }
+    });
   }
 
   deleteAccount() {
@@ -237,17 +244,23 @@ export class ProfileComponent  implements OnInit {
       return;
     }
 
-    this.authService.deleteUser(userId).subscribe(
-      () => {
+    this.authService.deleteUser(userId).subscribe({
+      next: () => {
         this.authService.logout();
         this.router.navigate(['/login']).then(() => {
           this.successMessage = 'Account eliminated successfully';
         });
       },
-      error => {
-        console.error('Error deleting account:', error);
-        this.errorMessage = 'An error occurred. Please try again';
+      error: (err) => {
+        console.error('Error deleting account:', err);
+        if (err.status === 404) {
+          this.errorMessage = 'User not found';
+        } else if (err.status === 401) {
+          this.errorMessage = 'No permission to delete';
+        } else {
+          this.errorMessage = 'An unexpected error occurred. Please try again';
+        }
       }
-    );
+    });
   }
 }

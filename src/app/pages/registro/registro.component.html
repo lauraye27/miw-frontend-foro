@@ -34,7 +34,6 @@
           Username is required
         </small>
         <small class="text-danger" *ngIf="errorMessage?.includes('username') && (formUtils.isTouched(registerForm,'userName') || registerForm.get('userName')?.dirty)">
-        <!--formUtils.isPristine(registerForm,'userName')">-->
           The username is already taken
         </small>
       </div>
@@ -54,7 +53,6 @@
           Invalid email format
         </small>
         <small class="text-danger" *ngIf="errorMessage?.includes('email') && (formUtils.isTouched(registerForm,'email') || registerForm.get('email')?.dirty)">
-        <!--formUtils.isPristine(registerForm,'email')">-->
           The email is already registered
         </small>
       </div>

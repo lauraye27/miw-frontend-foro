@@ -91,9 +91,7 @@ export class AuthService {
   }
 
   getToken(): string {
-    const token = localStorage.getItem('token');
-    console.log('Obteniendo token en auth.service:', token);
-    return token;
+    return localStorage.getItem('token');
   }
 
   getUser(): User | null {
@@ -116,7 +114,6 @@ export class AuthService {
       token: token
     };
     this.userSubject.next(user);
-    console.log('User set from token:', user);
   }
 
   getUserDetails(): Observable<User> {
