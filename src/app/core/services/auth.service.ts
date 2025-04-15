@@ -8,6 +8,7 @@ import {HttpService} from '@core/services/http.service';
 import {environment} from '@env';
 import {User} from '@core/models/user.model';
 import {Role} from '@core/models/role.model';
+import {HttpParams} from '@angular/common/http';
 
 
 @Injectable({providedIn: 'root'})
@@ -74,16 +75,8 @@ export class AuthService {
     return this.hasRoles([Role.MEMBER]);
   }
 
-  isGuest(): boolean {
-    return this.hasRoles([Role.GUEST]);
-  }
-
   untilAuthenticated(): boolean {
     return this.hasRoles([Role.ADMIN, Role.MEMBER]);
-  }
-
-  untilNoAuthenticated(): boolean {
-    return this.hasRoles([Role.ADMIN, Role.MEMBER, Role.GUEST]);
   }
 
   getName(): string {
@@ -171,5 +164,32 @@ export class AuthService {
 
   deleteUser(userId: number): Observable<any> {
     return this.httpService.delete(`${AuthService.USER_ENDPOINT}/delete/${userId}`);
+  }
+
+  requestPasswordReset(email: string): Observable<any> {
+    const params = new HttpParams().set('email', email);
+    const options = { params };
+
+    console.log('Sending request to:', `${environment.REST_USER}/account/forgot-password`);
+    console.log('With params:', params.toString());
+
+    return this.httpService.post(
+      `${environment.REST_USER}/account/forgot-password`,
+      options
+    ).pipe(
+      tap(response => console.log('Response:', response)),
+      catchError(error => {
+        console.error('Error:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    const params = new HttpParams()
+      .set('token', token)
+      .set('newPassword', newPassword);
+    return this.httpService.post(`${environment.REST_USER}/account/reset-password`, { params });
   }
 }

@@ -47,5 +47,9 @@ export class LoginComponent {
       },
     });
   }
+
+  openForgotPassword() {
+    window.open('/forgot-password', '_blank');
+  }
 }
 
