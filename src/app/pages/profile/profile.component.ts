@@ -30,7 +30,6 @@ import {MatButton} from '@angular/material/button';
 export class ProfileComponent  implements OnInit {
   userProfileForm: FormGroup;
   user: User = null;
-  userId: number;
   isEditMode: boolean = false;
   showPasswords: { [key: string]: boolean } = {
     password: false,
