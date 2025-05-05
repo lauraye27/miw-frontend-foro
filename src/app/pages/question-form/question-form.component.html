@@ -1,0 +1,32 @@
+<app-navbar></app-navbar>
+
+<div class="container mt-5">
+  <h2 class="mb-4">Ask a New Question</h2>
+
+  <form (ngSubmit)="submitQuestion()" #questionForm="ngForm">
+
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input type="text" id="title" class="form-control form-control-lg" placeholder="Enter a short and descriptive title..."
+        [(ngModel)]="question.title" name="title" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" rows="8" class="form-control" placeholder="Question description"
+        [(ngModel)]="question.description" name="description" required
+      ></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="tags" class="form-label">Tags <small class="text-muted"></small></label>
+      <input type="text" id="tags" class="form-control" placeholder="Add tags" disabled>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!questionForm.valid">
+      Submit Question
+    </button>
+
+  </form>
+</div>
+
