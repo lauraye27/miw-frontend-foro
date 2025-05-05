@@ -1,15 +1,18 @@
 import {Component, OnInit} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgIf} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
+import {MessageComponent} from '../shared/message/message.component';
 
 @Component({
   selector: 'app-reset-password',
   imports: [
     FormsModule,
-    NgIf
+    NgIf,
+    ReactiveFormsModule,
+    MessageComponent
   ],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.css'
@@ -55,27 +58,62 @@ import {AuthService} from '@core/services/auth.service';
 // }
 
 export class ResetPasswordComponent implements OnInit {
+  resetForm: FormGroup;
   token: string;
-  newPassword: string;
-  confirmPassword: string;
-  message: string;
-  error: string;
+  loading = false;
+  success = false;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
 
-  constructor(private route: ActivatedRoute, private authService: AuthService) {}
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService
+  ) {
+    this.resetForm = this.fb.group({
+      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', Validators.required]
+    }, { validator: this.passwordMatchValidator });
+  }
 
   ngOnInit() {
-    this.token = this.route.snapshot.queryParamMap.get('token');
+    this.token = this.route.snapshot.queryParamMap.get('token') || '';
+    if (!this.token) {
+      this.errorMessage = 'Invalid link';
+    }
+  }
+
+  passwordMatchValidator(form: FormGroup) {
+    return form.get('newPassword')?.value === form.get('confirmPassword')?.value
+      ? null : { mismatch: true };
   }
 
   onSubmit() {
-    if (this.newPassword !== this.confirmPassword) {
-      this.error = 'Passwords do not match';
+    if (this.resetForm.invalid || !this.token) {
       return;
     }
 
-    this.authService.resetPassword(this.token, this.newPassword).subscribe(
-      () => this.message = 'Password updated successfully',
-      err => this.error = err.error || 'Error resetting password'
-    );
+    this.loading = true;
+    this.successMessage = null;
+    this.errorMessage = null;
+
+    const { newPassword } = this.resetForm.value;
+
+    this.authService.resetPassword(this.token, newPassword).subscribe({
+      next: () => {
+        this.success = true;
+        this.successMessage = 'Your password has been reset successfully';
+        this.resetForm.disable();
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.message || 'Failed to reset password';
+      }
+    });
+  }
+
+  goToHome() {
+    this.router.navigate(['/']);
   }
 }
