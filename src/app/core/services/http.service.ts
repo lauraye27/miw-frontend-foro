@@ -51,9 +51,22 @@ export class HttpService {
     return this;
   }
 
-  post(endpoint: string, body?: object): Observable<any> {
+  // post(endpoint: string, body?: object): Observable<any> {
+  //   return this.http
+  //     .post(endpoint, body, this.createOptions())
+  //     .pipe(
+  //       map(response => this.extractData(response)),
+  //       catchError(error => this.handleError(error))
+  //     );
+  // }
+
+  post(endpoint: string, body?: object, params?: HttpParams): Observable<any> {
+    const options = this.createOptions();
+    if (params) {
+      options.params = params;
+    }
     return this.http
-      .post(endpoint, body, this.createOptions())
+      .post(endpoint, body, options)
       .pipe(
         map(response => this.extractData(response)),
         catchError(error => this.handleError(error))

@@ -2,8 +2,8 @@
 
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>Recent Questions</h3>
-    <button class="btn btn-primary" [disabled]="!authService.isAuthenticated()" (click)="onAskClick()">
+    <h3>My Questions</h3>
+    <button class="btn btn-primary" (click)="onAskClick()">
       Ask Question
     </button>
   </div>
@@ -28,17 +28,24 @@
       <div>
         <h5 class="mb-1">{{ q.title }}</h5>
         <small class="text-muted">
-          {{ q.author }} - {{ q.creationDate | date:'short' }}
+          {{ q.creationDate | date:'short' }}
         </small>
       </div>
-      <div>
-        <span class="badge bg-secondary rounded-pill me-2">{{ q.answers.length }} answers</span>
-        <span class="badge bg-light text-dark rounded-pill">{{ q.views || 0 }} views</span>
+      <div class="text-end">
+        <span class="badge bg-secondary rounded-pill me-2">{{ q.answers?.length || 0 }} answers</span>
+        <span class="badge bg-light text-dark rounded-pill me-2">{{ q.views || 0 }} views</span>
+
+        <button class="btn btn-sm btn-outline-primary me-2" (click)="onEditQuestion(q.id)">Edit</button>
+        <button class="btn btn-sm btn-outline-danger" (click)="onDeleteQuestion(q.id)">Delete</button>
       </div>
     </a>
   </div>
 
-  <nav aria-label="Question pagination">
+  <div *ngIf="questions.length === 0" class="alert alert-info">
+    You haven't asked any questions yet
+  </div>
+
+  <nav *ngIf="totalPages > 1" aria-label="Question pagination">
     <ul class="pagination justify-content-center">
       <li class="page-item" [class.disabled]="currentPage === 0">
         <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
@@ -56,4 +63,3 @@
     </ul>
   </nav>
 </div>
-

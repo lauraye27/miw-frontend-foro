@@ -1,7 +1,7 @@
 import {Role} from './role.model';
 
 export interface User {
-  id?: number;
+  id: string;
   token: string;
   firstName?: string;
   lastName?: string;

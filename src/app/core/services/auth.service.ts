@@ -5,18 +5,13 @@ import {catchError, map} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 
 import {HttpService} from '@core/services/http.service';
-import {environment} from '@env';
 import {User} from '@core/models/user.model';
 import {Role} from '@core/models/role.model';
+import {Endpoints} from '@core/endpoints';
 
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  static readonly USER = '/user';
-  static readonly USER_ENDPOINT = environment.REST_USER + AuthService.USER;
-  static readonly LOGIN_ENDPOINT = AuthService.USER_ENDPOINT + '/login';
-  static readonly VERIFY_PASSWORD_ENDPOINT = AuthService.USER_ENDPOINT + '/verifyPassword';
-  static readonly REGISTER_ENDPOINT = AuthService.USER_ENDPOINT + '/register';
 
   private readonly userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
@@ -29,7 +24,7 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<any> {
-    return this.httpService.post(AuthService.LOGIN_ENDPOINT, { email, password }).pipe(
+    return this.httpService.post(Endpoints.LOGIN, { email, password }).pipe(
       tap((response: any) => {
         const token = response.token;
         localStorage.setItem('token', token);
@@ -43,7 +38,7 @@ export class AuthService {
 
   register(user: { firstName: string; lastName: string; userName: string; phone: string; email: string; password: string }): Observable<any> {
     return this.httpService
-      .post(AuthService.REGISTER_ENDPOINT, user)
+      .post(Endpoints.REGISTER, user)
       .pipe(
         map(response => {
           console.log('User registered:', response);
@@ -55,7 +50,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     this.userSubject.next(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login']).then();
   }
 
   isAuthenticated(): boolean {
@@ -74,16 +69,8 @@ export class AuthService {
     return this.hasRoles([Role.MEMBER]);
   }
 
-  isGuest(): boolean {
-    return this.hasRoles([Role.GUEST]);
-  }
-
   untilAuthenticated(): boolean {
     return this.hasRoles([Role.ADMIN, Role.MEMBER]);
-  }
-
-  untilNoAuthenticated(): boolean {
-    return this.hasRoles([Role.ADMIN, Role.MEMBER, Role.GUEST]);
   }
 
   getName(): string {
@@ -91,7 +78,10 @@ export class AuthService {
   }
 
   getToken(): string {
-    return localStorage.getItem('token');
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('token');
+    }
+    return null;
   }
 
   getUser(): User | null {
@@ -110,7 +100,7 @@ export class AuthService {
       firstName: decodedToken.firstName,
       lastName: decodedToken.lastName,
       email: decodedToken.email,
-      role: decodedToken.role,
+      role: decodedToken.role as Role,
       token: token
     };
     this.userSubject.next(user);
@@ -122,7 +112,7 @@ export class AuthService {
       return throwError(() => new Error());
     }
 
-    return this.httpService.get(`${AuthService.USER_ENDPOINT}/${user.id}`).pipe(
+    return this.httpService.get(`${Endpoints.USERS}/${user.id}`).pipe(
       map(user => {
         this.userSubject.next(user);
         return user;
@@ -140,7 +130,7 @@ export class AuthService {
       return throwError(() => new Error('User ID not found'));
     }
 
-    return this.httpService.post(AuthService.VERIFY_PASSWORD_ENDPOINT, { userId, currentPassword }).pipe(
+    return this.httpService.post(Endpoints.FORGOT_PASSWORD, { userId, currentPassword }).pipe(
       map(response => response.isValid),
       catchError(error => {
         console.error('Error verifying password:', error);
@@ -157,11 +147,11 @@ export class AuthService {
     }
     const token = this.getToken();
     if (!token) {
-      console.error('Error: Token no encontrado');
-      return throwError(() => new Error('User token no encontrado'));
+      console.error('Error: Token not found');
+      return throwError(() => new Error('User token not found'));
     }
 
-    return this.httpService.put(`${AuthService.USER_ENDPOINT}/update/${userId}`, updatedUser).pipe(
+    return this.httpService.put(`${Endpoints.USERS}/${userId}`, updatedUser).pipe(
       catchError(error => {
         console.error('Error updating user:', error);
         return throwError(() => error);
@@ -169,7 +159,35 @@ export class AuthService {
     );
   }
 
-  deleteUser(userId: number): Observable<any> {
-    return this.httpService.delete(`${AuthService.USER_ENDPOINT}/delete/${userId}`);
+  deleteUser(userId: string): Observable<any> {
+    return this.httpService.delete(`${Endpoints.USERS}/${userId}`);
+  }
+
+  requestPasswordReset(email: string): Observable<any> {
+    return this.httpService.post(
+      Endpoints.FORGOT_PASSWORD,
+      { email }
+      //null,
+      //params
+    ).pipe(
+      tap(response => console.log('Response:', response)),
+      catchError(error => {
+        if (error.status === 404) {
+          //return throwError(() => error);
+          throw new Error('User not found');
+        } else if (error.status === 500) {
+          throw new Error('Server error occurred');
+        } else {
+          throw new Error('Failed to send reset email');
+        }
+      })
+    );
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.httpService.post(
+      Endpoints.RESET_PASSWORD,
+      { token, newPassword }
+    );
   }
 }

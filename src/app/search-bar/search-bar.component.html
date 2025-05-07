@@ -1,0 +1,22 @@
+<div class="search-container">
+  <div class="input-group">
+    <input type="text"
+           [(ngModel)]="searchQuery"
+           (input)="onSearchInput()"
+           (keyup.enter)="executeSearch()"
+           placeholder="Search questions..."
+           class="form-control">
+    <button class="btn btn-primary" type="button" (click)="executeSearch()">
+      <i class="fas fa-search"></i>
+    </button>
+  </div>
+
+<!--  <div class="suggestions-dropdown" *ngIf="showSuggestions && suggestions.length > 0">-->
+<!--    <div *ngFor="let item of suggestions"-->
+<!--         class="suggestion-item"-->
+<!--         (click)="selectSuggestion(item)">-->
+<!--      <div class="suggestion-title">{{ item.title }}</div>-->
+<!--      <div class="suggestion-excerpt">{{ item.description | truncate:50 }}</div>-->
+<!--    </div>-->
+<!--  </div>-->
+</div>

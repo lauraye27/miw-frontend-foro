@@ -65,15 +65,29 @@
   color: #007bff;
 }
 
-@media (min-width: 992px) {
-  .custom-navbar-collapse {
-    position: static;
-    box-shadow: none;
-  }
+.search-form {
+  max-width: 600px;
+  min-width: 250px;
+  width: 50%;
+}
 
-  .custom-navbar-collapse .navbar-nav {
-    flex-direction: row;
-  }
+.notification-icon {
+  position: relative;
+}
+
+.notification-icon .nav-link {
+  padding: 0.5rem;
+  font-size: 1.1rem;
+  color: black;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.6rem;
+  padding: 0.2rem 0.35rem;
+  border-radius: 50%;
 }
 
 .user-section .navbar-nav {
@@ -103,4 +117,18 @@
   text-align: center;
   line-height: 30px;
   font-weight: bold;
+}
+
+@media (max-width: 992px) {
+  .navbar-collapse {
+    padding: 1rem;
+    background-color: rgb(133, 162, 208);
+    margin-top: 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  .search-form {
+    width: 70%;
+    margin: 0 1rem;
+  }
 }
