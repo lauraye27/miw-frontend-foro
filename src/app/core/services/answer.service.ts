@@ -10,7 +10,7 @@ export class AnswerService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  createAnswer(questionId: string, answer: { content: string }): Observable<any> {
+  createAnswer(questionId: number, answer: { content: string }): Observable<any> {
     return this.httpService.post(`${Endpoints.QUESTIONS}/${questionId}/answers`, answer);
   }
 }

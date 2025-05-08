@@ -28,11 +28,11 @@ export class QuestionService {
     );
   }
 
-  updateQuestion(questionId: string, questionData: any): Observable<any> {
+  updateQuestion(questionId: number, questionData: any): Observable<any> {
     return this.httpService.put(`${Endpoints.QUESTIONS}/${questionId}`, questionData);
   }
 
-  deleteQuestion(questionId: string): Observable<void> {
+  deleteQuestion(questionId: number): Observable<void> {
     return this.httpService.delete(`${Endpoints.QUESTIONS}/${questionId}`);
   }
 
@@ -44,7 +44,7 @@ export class QuestionService {
     return this.httpService.get(`${Endpoints.QUESTION_MY}?page=${page}&size=10&sortBy=creationDate&sortDirection=asc`);
   }
 
-  getQuestionById(id: string): Observable<Question> {
+  getQuestionById(id: number): Observable<Question> {
     return this.httpService.get(`${Endpoints.QUESTIONS}/${id}`).pipe(
       catchError(error => {
         console.error('Error fetching question by id:', error);
@@ -53,7 +53,7 @@ export class QuestionService {
     );
   }
 
-  incrementViews(id: string): Observable<any> {
+  incrementViews(id: number): Observable<any> {
     return this.httpService.patch(
       `${Endpoints.QUESTIONS}/${id}/views`
     ).pipe(

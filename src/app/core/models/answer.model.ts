@@ -1,10 +1,10 @@
 import {Comment} from '@core/models/comment.model';
 
 export interface Answer {
-  id: string;
+  id: number;
   content: string;
   author: string;
-  questionId: string;
+  questionId: number;
   creationDate: Date;
   comments: Comment[];
 }

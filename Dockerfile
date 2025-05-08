@@ -7,6 +7,9 @@ RUN npm run build-prod
 
 # Etapa de runtime con un servidor ligero (Nginx)
 FROM nginx:stable-alpine
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 WORKDIR /usr/share/nginx/html
 COPY --from=build /app/dist/miw-frontend-foro/browser/ ./
 EXPOSE 80
