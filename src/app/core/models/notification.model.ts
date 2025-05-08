@@ -1,11 +1,11 @@
 export interface Notification {
-  id: string;
-  userId: string;
+  id: number;
+  userId: number;
   type: 'ANSWER' | 'COMMENT' | 'REPLY';
   message: string;
-  questionId?: string;
-  answerId?: string;
-  commentId?: string;
+  questionId?: number;
+  answerId?: number;
+  // commentId?: number;
   read: boolean;
   createdAt: Date;
 }

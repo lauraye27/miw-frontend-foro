@@ -92,7 +92,7 @@ export class NavbarComponent implements OnInit {
     }, 200);
   }
 
-  navigateToQuestion(questionId: string): void {
+  navigateToQuestion(questionId: number): void {
     this.showSearchResults = false;
     this.searchQuery = '';
     this.searchResults = null;

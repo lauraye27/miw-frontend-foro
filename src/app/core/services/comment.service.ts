@@ -9,7 +9,7 @@ import {Endpoints} from '@core/endpoints';
 export class CommentService {
   constructor(private readonly httpService: HttpService) {}
 
-  createComment(questionId: string, answerId: string, comment: { content: string }): Observable<Comment> {
+  createComment(questionId: number, answerId: number, comment: { content: string }): Observable<Comment> {
     return this.httpService.post(`${Endpoints.QUESTIONS}/${questionId}/answers/${answerId}/comments`, comment);
   }
 }

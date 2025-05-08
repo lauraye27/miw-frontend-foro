@@ -19,7 +19,7 @@ export class QuestionFormComponent implements OnInit {
     description: ''
   };
   isEditMode = false;
-  questionId: string | null = null;
+  questionId: number | null = null;
 
   constructor(
     private questionService: QuestionService,
@@ -28,15 +28,16 @@ export class QuestionFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.questionId = this.route.snapshot.paramMap.get('id');
-    if (this.questionId) {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.questionId = Number(id);
       console.log("QUEST " + this.questionId);
       this.isEditMode = true;
       this.loadQuestion(this.questionId);
     }
   }
 
-  loadQuestion(id: string): void {
+  loadQuestion(id: number): void {
     this.questionService.getQuestionById(id).subscribe({
       next: (data) => {
         this.question = {

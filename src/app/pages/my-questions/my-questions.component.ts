@@ -54,12 +54,12 @@ export class MyQuestionsComponent implements OnInit {
     }
   }
 
-  onEditQuestion(questionId: string): void {
+  onEditQuestion(questionId: number): void {
     this.router.navigate(['/question-form', questionId]).then(() => {
     });
   }
 
-  onDeleteQuestion(questionId: string): void {
+  onDeleteQuestion(questionId: number): void {
     if (confirm('Are you sure you want to delete this question?')) {
       this.questionService.deleteQuestion(questionId).subscribe({
         next: () => {
