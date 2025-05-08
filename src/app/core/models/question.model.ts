@@ -1,7 +1,7 @@
 import {Answer} from '@core/models/answer.model';
 
 export interface Question {
-  id: string;
+  id: number;
   title: string;
   description: string;
   author: string;

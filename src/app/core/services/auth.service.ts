@@ -159,7 +159,7 @@ export class AuthService {
     );
   }
 
-  deleteUser(userId: string): Observable<any> {
+  deleteUser(userId: number): Observable<any> {
     return this.httpService.delete(`${Endpoints.USERS}/${userId}`);
   }
 

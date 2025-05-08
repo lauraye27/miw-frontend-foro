@@ -19,7 +19,7 @@ export class NotificationService {
     return this.httpService.get(`${Endpoints.NOTIFICATIONS}/unread-count`);
   }
 
-  markAsRead(notificationId: string): Observable<void> {
+  markAsRead(notificationId: number): Observable<void> {
     return this.httpService.patch(`${Endpoints.NOTIFICATIONS}/${notificationId}/read`, {});
   }
 

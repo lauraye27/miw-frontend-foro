@@ -40,13 +40,13 @@ export class QuestionComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.loadQuestion(id);
+      this.loadQuestion(Number(id));
     } else {
       this.errorMessage = 'Question ID not provided';
     }
   }
 
-  loadQuestion(id: string): void {
+  loadQuestion(id: number): void {
     this.questionService.getQuestionById(id).subscribe({
       next: (question) => {
         this.question = question;
