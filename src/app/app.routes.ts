@@ -7,7 +7,7 @@ import {ProfileComponent} from './pages/profile/profile.component';
 import {ResetPasswordComponent} from './reset-password/reset-password.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 import {QuestionFormComponent} from './pages/question-form/question-form.component';
-import {NotificationComponent} from './pages/notification/notification.component';
+import {NotificationComponent} from './notification/notification.component';
 import {MyQuestionsComponent} from './pages/my-questions/my-questions.component';
 import {QuestionComponent} from './pages/question/question.component';
 import {SearchBarComponent} from './search-bar/search-bar.component';
