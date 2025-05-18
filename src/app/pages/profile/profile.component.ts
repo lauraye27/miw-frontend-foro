@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '@core/services/auth.service';
 import {Router} from '@angular/router';
@@ -8,8 +8,8 @@ import {filter, take} from 'rxjs';
 import {User} from '@core/models/user.model';
 import {MessageComponent} from "../../shared/message/message.component";
 import { FormUtilsService } from '../../shared/services/form-utils.service';
-import {MatDialog, MatDialogActions, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
-import {MatButton} from '@angular/material/button';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -18,11 +18,7 @@ import {MatButton} from '@angular/material/button';
     NavbarComponent,
     NgIf,
     NgClass,
-    MessageComponent,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogTitle,
-    MatButton,
+    MessageComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -39,8 +35,6 @@ export class ProfileComponent  implements OnInit {
   showPasswordSection: boolean = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
-
-  @ViewChild('deleteConfirmationTemplate') deleteConfirmationTemplate!: TemplateRef<any>;
 
   constructor(private authService: AuthService, private router: Router, private fb: FormBuilder,
               public formUtils: FormUtilsService, protected dialog: MatDialog) {
@@ -221,16 +215,17 @@ export class ProfileComponent  implements OnInit {
     }
   }
 
-  openDeleteConfirmation() {
-    const dialogRef = this.dialog.open(this.deleteConfirmationTemplate, {
+  openDeleteConfirmation(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '400px',
       data: {
-        message: 'Are you sure you want to delete the account? This action cannot be undone'
+        title: 'Delete Account',
+        message: 'Are you sure you want to delete the account? This action cannot be undone.'
       }
     });
 
-    dialogRef.afterClosed().subscribe((isConfirmed: boolean) => {
-      if (isConfirmed) {
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
         this.deleteAccount();
       }
     });

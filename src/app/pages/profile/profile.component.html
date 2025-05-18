@@ -101,17 +101,6 @@
 
   </form>
 
-  <ng-template #deleteConfirmationTemplate let-data let-dialogRef="dialogRef">
-    <h2 mat-dialog-title>Confirm Action</h2>
-    <mat-dialog-content>
-      <p>{{ data.message }}</p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="dialogRef.close(false)">Cancel</button>
-      <button mat-button color="warn" (click)="dialogRef.close(true)">Delete</button>
-    </mat-dialog-actions>
-  </ng-template>
-
   <div class="text-end mt-3" *ngIf="isEditMode">
     <button type="button" class="btn btn-danger" (click)="openDeleteConfirmation()"> Delete Account </button>
   </div>

@@ -6,7 +6,6 @@ import {ActivatedRoute} from '@angular/router';
 import {QuestionService} from '@core/services/question.service';
 import {AuthService} from '@core/services/auth.service';
 import {AnswerService} from '@core/services/answer.service';
-import {CommentService} from '@core/services/comment.service';
 import {MessageComponent} from '../../shared/message/message.component';
 
 @Component({
@@ -24,8 +23,8 @@ import {MessageComponent} from '../../shared/message/message.component';
 })
 export class QuestionComponent implements OnInit {
   question: any | null = null;
+  answers: any[] = [];
   newAnswer: { content: string } = { content: '' };
-  newComments: { [key: string]: string } = {};
 
   errorMessage: string | null = null;
 
@@ -33,26 +32,43 @@ export class QuestionComponent implements OnInit {
     private route: ActivatedRoute,
     public authService: AuthService,
     private questionService: QuestionService,
-    private answerService: AnswerService,
-    private commentService: CommentService
+    private answerService: AnswerService
   ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.loadQuestion(Number(id));
+      const questionId = Number(id);
+      this.loadQuestion(questionId);
+      this.loadAnswers(questionId);
     } else {
       this.errorMessage = 'Question ID not provided';
     }
   }
 
   loadQuestion(id: number): void {
-    this.questionService.getQuestionById(id).subscribe({
-      next: (question) => {
-        this.question = question;
-        this.questionService.incrementViews(id).subscribe();
+    this.questionService.incrementViews(id).subscribe({
+      next: () => {
+        this.questionService.getQuestionById(id).subscribe({
+          next: (question) => {
+            this.question = question;
+          },
+          error: (err) => console.error('Error loading question after incrementing views', err)
+        });
       },
-      error: (err) => console.error('Error loading question', err)
+      error: (err) => console.error('Error incrementing views', err)
+    });
+  }
+
+  loadAnswers(questionId: number): void {
+    this.answerService.getAnswersByQuestionId(questionId).subscribe({
+      next: (answers) => {
+        this.answers = answers;
+      },
+      error: (err) => {
+        console.error('Error loading answers', err);
+        this.errorMessage = 'Error loading answers. Please try again';
+      }
     });
   }
 
@@ -61,36 +77,19 @@ export class QuestionComponent implements OnInit {
   }
 
   addAnswer(): void {
-    if (!this.question?.id) return;
+    if (!this.question?.id /*|| !this.newAnswer.content.trim()*/) return;
 
-    this.answerService.createAnswer(this.question.id, this.newAnswer).subscribe({
-      next: (answer) => {
-        if (this.question) {
-          this.question.answers = [...(this.question.answers || []), answer];
-          this.newAnswer = { content: '' };
-        }
+    this.answerService.createAnswer(this.question.id, this.newAnswer.content).subscribe({
+      next: (newAnswer) => {
+        this.answers = [newAnswer, ...this.answers];
+        this.newAnswer.content = '';
+        this.loadAnswers(this.question!.id);
+        this.errorMessage = null;
       },
-      error: (err) => console.error('Error posting answer', err)
-    });
-  }
-
-  addComment(answer: any): void {
-    const commentContent = this.newComments[answer.id];
-    if (!commentContent || !answer.id || !this.question?.id) return;
-
-    this.commentService.createComment(this.question.id, answer.id, { content: commentContent }).subscribe({
-      // next: (comment) => {
-      //   answer.comments = [...(answer.comments || []), comment];
-      //   this.newComments[answer.id] = '';
-      // },
-      next: (comment) => {
-        if (!answer.comments) {
-          answer.comments = [];
-        }
-        answer.comments.push(comment);
-        this.newComments[answer.id] = '';
-      },
-      error: (err) => console.error('Error posting comment', err)
+      error: (err) => {
+        console.error('Error posting answer', err);
+        this.errorMessage = 'Error posting answer. Please try again';
+      }
     });
   }
 }

@@ -1,9 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {NavbarComponent} from "../../navbar/navbar.component";
 import {Router, RouterLink} from '@angular/router';
 import {QuestionService} from '@core/services/question.service';
 import {AuthService} from '@core/services/auth.service';
+import {MessageComponent} from '../../shared/message/message.component';
+import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-my-questions',
@@ -12,7 +15,8 @@ import {AuthService} from '@core/services/auth.service';
     NavbarComponent,
     NgForOf,
     RouterLink,
-    NgIf
+    NgIf,
+    MessageComponent
   ],
   templateUrl: './my-questions.component.html',
   styleUrl: './my-questions.component.css'
@@ -23,7 +27,12 @@ export class MyQuestionsComponent implements OnInit {
   totalPages = 0;
   pageSize = 10;
 
-  constructor(private router: Router, private questionService: QuestionService, private authService: AuthService) {}
+  errorMessage: string | null = null;
+
+  @ViewChild('deleteConfirmationTemplate') deleteConfirmationTemplate!: TemplateRef<any>;
+
+  constructor(private router: Router, private questionService: QuestionService, private authService: AuthService,
+              protected dialog: MatDialog) {}
 
   ngOnInit() {
     this.loadMyQuestions();
@@ -59,19 +68,42 @@ export class MyQuestionsComponent implements OnInit {
     });
   }
 
+  // onDeleteQuestion(questionId: number): void {
+  //   if (confirm('Are you sure you want to delete this question?')) {
+  //     this.questionService.deleteQuestion(questionId).subscribe({
+  //       next: () => {
+  //         this.questions = this.questions.filter(q => q.id !== questionId);
+  //         this.router.navigate(['/my-questions']).then();
+  //       },
+  //       error: err => {
+  //         this.errorMessage = 'An error occurred while deleting the question';
+  //       }
+  //     });
+  //   }
+  // }
+
   onDeleteQuestion(questionId: number): void {
-    if (confirm('Are you sure you want to delete this question?')) {
-      this.questionService.deleteQuestion(questionId).subscribe({
-        next: () => {
-          this.questions = this.questions.filter(q => q.id !== questionId);
-          this.router.navigate(['/my-questions']).then();
-        },
-        error: err => {
-          console.error('Failed to delete question', err);
-          alert('An error occurred while deleting the question.');
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Question',
+        message: 'Are you sure you want to delete this question?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.questionService.deleteQuestion(questionId).subscribe({
+          next: () => {
+            this.questions = this.questions.filter(q => q.id !== questionId);
+            this.router.navigate(['/my-questions']).then();
+          },
+          error: err => {
+            this.errorMessage = 'An error occurred while deleting the question';
+          }
+        });
+      }
+    });
   }
 
 }

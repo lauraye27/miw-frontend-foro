@@ -3,12 +3,14 @@ import {NavbarComponent} from '../../navbar/navbar.component';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {QuestionService} from '@core/services/question.service';
+import {MessageComponent} from '../../shared/message/message.component';
 
 @Component({
   selector: 'app-question-form',
   imports: [
     NavbarComponent,
-    FormsModule
+    FormsModule,
+    MessageComponent
   ],
   templateUrl: './question-form.component.html',
   styleUrl: './question-form.component.css'
@@ -21,6 +23,9 @@ export class QuestionFormComponent implements OnInit {
   isEditMode = false;
   questionId: number | null = null;
 
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+
   constructor(
     private questionService: QuestionService,
     private router: Router,
@@ -31,7 +36,6 @@ export class QuestionFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.questionId = Number(id);
-      console.log("QUEST " + this.questionId);
       this.isEditMode = true;
       this.loadQuestion(this.questionId);
     }
@@ -47,7 +51,7 @@ export class QuestionFormComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading question:', error);
-        alert('Failed to load the question.');
+        this.errorMessage = 'Failed to load the question';
       }
     });
   }
@@ -56,38 +60,25 @@ export class QuestionFormComponent implements OnInit {
     if (this.isEditMode && this.questionId) {
       this.questionService.updateQuestion(this.questionId, this.question).subscribe({
         next: () => {
-          alert('Question updated successfully!');
+          this.successMessage = 'Question updated successfully';
           this.router.navigate(['/foro']).then();
         },
         error: (error) => {
           console.error('Error updating question:', error);
-          alert('Failed to update question.');
+          this.errorMessage = 'Failed to update question';
         }
       });
     } else {
       this.questionService.createQuestion(this.question).subscribe({
         next: () => {
-          alert('Question created successfully!');
+          this.successMessage = 'Question created successfully!';
           this.router.navigate(['/foro']).then();
         },
         error: (error) => {
           console.error('Error creating question:', error);
-          alert('Failed to create question.');
+          this.errorMessage = 'Failed to create question';
         }
       });
     }
   }
-
-  // submitQuestion(): void {
-  //   this.questionService.createQuestion(this.question).subscribe({
-  //     next: () => {
-  //       alert('Question created successfully!');
-  //       this.router.navigate(['/foro']).then();
-  //     },
-  //     error: (error) => {
-  //       console.error('Error creating question-form:', error);
-  //       alert('Failed to create question-form. Please try again.');
-  //     }
-  //   });
-  // }
 }
