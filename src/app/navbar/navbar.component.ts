@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -10,6 +10,7 @@ import {SearchBarComponent} from '../search-bar/search-bar.component';
 import {Question} from '@core/models/question.model';
 import {QuestionService} from '@core/services/question.service';
 import {TruncatePipe} from '@core/truncate.pipe';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -26,7 +27,7 @@ import {TruncatePipe} from '@core/truncate.pipe';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
 
   isAuthenticated = false;
   firstName: string = '';
@@ -39,6 +40,7 @@ export class NavbarComponent implements OnInit {
 
   unreadNotifications = 0;
   notifications: Notification[] = [];
+  notificationSub: Subscription;
 
   constructor(protected authService: AuthService, private router: Router, private notificationService: NotificationService,
               private questionService: QuestionService) { }
@@ -49,7 +51,14 @@ export class NavbarComponent implements OnInit {
       if (user) {
         this.firstName = user.firstName;
         this.lastName = user.lastName;
+
+        this.notificationService.connect(user.id.toString())
         this.loadNotifications();
+
+        this.notificationSub = this.notificationService.notifications$.subscribe(notifications => {
+          this.notifications = notifications.filter(n => !n.read);
+          this.unreadNotifications = notifications.filter(n => !n.read).length;
+        });
       }
     });
   }
@@ -100,30 +109,45 @@ export class NavbarComponent implements OnInit {
   }
 
   loadNotifications(): void {
-    // if (this.isAuthenticated) {
-    //   this.notificationService.getNotifications().subscribe(notifications => {
-    //     //this.notifications = notifications;
-    //     //this.unreadNotifications = notifications.filter(n => !n.read).length;
-    //   });
-    // }
+    if (this.isAuthenticated) {
+      this.notificationService.getStoredNotifications();
+    }
   }
 
   getNotificationIcon(type: string): string {
     switch(type) {
       case 'ANSWER': return 'reply';
-      case 'COMMENT': return 'comment';
-      case 'REPLY': return 'comments';
-      default: return 'bell';
+      case 'RATED': return 'rated';
+      default: return 'notification';
     }
   }
 
   viewNotification(notification: Notification): void {
-    // this.notificationService.markAsRead(notification.id).subscribe(() => {
-    //   this.loadNotifications();
-    // });
+    if (!notification.read) {
+      this.notificationService.markAsRead(notification.id).subscribe({
+        next: () => this.navigateToNotification(notification),
+        error: (err) => console.error('Error marking notification as read', err)
+      });
+    } else {
+      this.navigateToNotification(notification);
+    }
+  }
 
+  private navigateToNotification(notification: Notification): void {
     if (notification.questionId) {
-      this.router.navigate(['/notification', notification.questionId]).then(r => {});
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/question', notification.questionId], {
+          state: { highlightAnswer: notification.answerId },
+          onSameUrlNavigation: 'reload'
+        });
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.notificationService.disconnect();
+    if (this.notificationSub) {
+      this.notificationSub.unsubscribe();
     }
   }
 

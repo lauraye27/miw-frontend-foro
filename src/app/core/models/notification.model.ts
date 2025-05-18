@@ -1,11 +1,10 @@
 export interface Notification {
   id: number;
   userId: number;
-  type: 'ANSWER' | 'COMMENT' | 'REPLY';
   message: string;
   questionId?: number;
   answerId?: number;
-  // commentId?: number;
+  type: 'QUESTION_REPLIED' | 'ANSWER_RATED';
   read: boolean;
-  createdAt: Date;
+  creationDate: Date;
 }
