@@ -77,7 +77,7 @@ export class QuestionComponent implements OnInit {
   }
 
   addAnswer(): void {
-    if (!this.question?.id /*|| !this.newAnswer.content.trim()*/) return;
+    if (!this.question?.id) return;
 
     this.answerService.createAnswer(this.question.id, this.newAnswer.content).subscribe({
       next: (newAnswer) => {

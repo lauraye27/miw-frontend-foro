@@ -36,7 +36,7 @@ export class QuestionService {
     return this.httpService.delete(`${Endpoints.QUESTIONS}/${questionId}`);
   }
 
-  getQuestions(page: number = 0): Observable<any> {
+  getQuestions(page: number): Observable<any> {
     return this.httpService.get(`${Endpoints.QUESTIONS}?page=${page}&size=10&sortBy=creationDate&sortDirection=asc`);
   }
 
