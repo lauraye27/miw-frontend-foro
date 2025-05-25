@@ -63,24 +63,11 @@ export class MyQuestionsComponent implements OnInit {
     }
   }
 
-  onEditQuestion(questionId: number): void {
-    this.router.navigate(['/question-form', questionId]).then(() => {
-    });
+  onEditQuestion(questionId: number, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.router.navigate(['/question-form', questionId]);
   }
-
-  // onDeleteQuestion(questionId: number): void {
-  //   if (confirm('Are you sure you want to delete this question?')) {
-  //     this.questionService.deleteQuestion(questionId).subscribe({
-  //       next: () => {
-  //         this.questions = this.questions.filter(q => q.id !== questionId);
-  //         this.router.navigate(['/my-questions']).then();
-  //       },
-  //       error: err => {
-  //         this.errorMessage = 'An error occurred while deleting the question';
-  //       }
-  //     });
-  //   }
-  // }
 
   onDeleteQuestion(questionId: number): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {

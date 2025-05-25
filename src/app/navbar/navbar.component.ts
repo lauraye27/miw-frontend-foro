@@ -56,7 +56,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.loadNotifications();
 
         this.notificationSub = this.notificationService.notifications$.subscribe(notifications => {
-          this.notifications = notifications.filter(n => !n.read);
+          this.notifications = notifications;
           this.unreadNotifications = notifications.filter(n => !n.read).length;
         });
       }
@@ -105,7 +105,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.showSearchResults = false;
     this.searchQuery = '';
     this.searchResults = null;
-    this.router.navigate(['/question', questionId]).then(r => {});
+    this.router.navigate(['/question', questionId]).then();
   }
 
   loadNotifications(): void {

@@ -39,7 +39,7 @@
         <span class="badge bg-secondary rounded-pill me-2">{{ q.answers?.length || 0 }} answers</span>
         <span class="badge bg-light text-dark rounded-pill me-2">{{ q.views || 0 }} views</span>
 
-        <button class="btn btn-sm btn-outline-primary me-2" (click)="onEditQuestion(q.id)">Edit</button>
+        <button class="btn btn-sm btn-outline-primary me-2" (click)="onEditQuestion(q.id, $event)">Edit</button>
         <button class="btn btn-sm btn-outline-danger" (click)="onDeleteQuestion(q.id)">Delete</button>
       </div>
     </a>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
@@ -12,12 +12,17 @@ import {DatePipe, NgForOf, NgIf} from '@angular/common';
   templateUrl: './foro.component.html',
   styleUrl: './foro.component.css',
 })
-export class foroComponent {
+export class foroComponent implements OnInit {
 
   questions: any[] = [];
   currentPage: number;
   totalPages: number;
   visiblePages: number[] = [0];
+
+  sortField = 'creationDate';
+  sortDirection = 'desc';
+  unansweredOnly = false;
+  viewsSortDirection: 'desc' | 'asc' | null = null;
 
   constructor(private router: Router, protected authService: AuthService, private questionService: QuestionService) {}
 
@@ -26,7 +31,7 @@ export class foroComponent {
   }
 
   loadQuestions(page: number = 0): void {
-    this.questionService.getQuestions(page).subscribe({
+    this.questionService.getQuestions(page, this.sortField, this.sortDirection, this.unansweredOnly).subscribe({
       next: (res) => {
         this.questions = res.content;
         this.currentPage = res.page.number;
@@ -70,5 +75,33 @@ export class foroComponent {
         this.visiblePages.push(i);
       }
     }
+  }
+
+  toggleSortByDate(): void {
+    if (this.sortField === 'creationDate') {
+      this.sortDirection = this.sortDirection === 'desc' ? 'asc' : 'desc';
+    } else {
+      this.sortField = 'creationDate';
+      this.sortDirection = 'desc';
+    }
+    this.viewsSortDirection = null;
+    this.loadQuestions(0);
+  }
+
+  toggleUnansweredOnly(): void {
+    this.unansweredOnly = !this.unansweredOnly;
+    this.loadQuestions(0);
+  }
+
+  toggleSortByViews(): void {
+    if (this.sortField === 'views') {
+      this.viewsSortDirection = this.viewsSortDirection === 'desc' ? 'asc' : 'desc';
+      this.sortDirection = this.viewsSortDirection;
+    } else {
+      this.sortField = 'views';
+      this.viewsSortDirection = 'desc';
+      this.sortDirection = 'desc';
+    }
+    this.loadQuestions(0);
   }
 }

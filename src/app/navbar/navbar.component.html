@@ -88,14 +88,14 @@
             <span class="user-avatar">{{ userNameInitials }}</span>
           </a>
           <ul class="dropdown-menu dropdown-profile">
-            <li><a class="dropdown-item" href="/profile">Profile</a></li>
-            <li><a class="dropdown-item" href="#" routerLink="/my-questions">My Questions</a></li>
-            <li><a class="dropdown-item" href="#" routerLink="/my-answers">My Answers</a></li>
+            <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
+            <li><a class="dropdown-item" routerLink="/my-questions">My Questions</a></li>
+            <li><a class="dropdown-item" routerLink="/my-answers">My Answers</a></li>
 
-            <ng-container *ngIf="user?.role === 'ADMIN'">
+            <ng-container *ngIf="authService.isAdmin()">
               <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#" routerLink="/admin/tags">Manage Tags</a></li>
-              <li><a class="dropdown-item" href="#" routerLink="/admin/users">Manage Users</a></li>
+              <li><a class="dropdown-item" routerLink="/admin/tags">Tags</a></li>
+              <li><a class="dropdown-item" routerLink="/admin/users">Users</a></li>
             </ng-container>
 
             <li><hr class="dropdown-divider" /></li>

@@ -36,12 +36,13 @@ export class QuestionService {
     return this.httpService.delete(`${Endpoints.QUESTIONS}/${questionId}`);
   }
 
-  getQuestions(page: number): Observable<any> {
-    return this.httpService.get(`${Endpoints.QUESTIONS}?page=${page}&size=10&sortBy=creationDate&sortDirection=asc`);
+  getQuestions(page: number = 0, sortBy: string = 'creationDate', sortDirection: string = 'desc', unanswered: boolean): Observable<any> {
+    let params = `?page=${page}&size=10&sortBy=${sortBy}&sortDirection=${sortDirection}&unanswered=${unanswered}`;
+    return this.httpService.get(`${Endpoints.QUESTIONS}${params}`);
   }
 
   getMyQuestions(email: string, page: number, size: number): Observable<any> {
-    return this.httpService.get(`${Endpoints.QUESTION_MY}?page=${page}&size=10&sortBy=creationDate&sortDirection=asc`);
+    return this.httpService.get(`${Endpoints.QUESTION_MY}?page=${page}&size=10&sortBy=creationDate&sortDirection=desc`);
   }
 
   getQuestionById(id: number): Observable<Question> {

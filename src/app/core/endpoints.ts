@@ -9,7 +9,7 @@ export class Endpoints {
   static readonly RESET_PASSWORD = `${environment.REST_API}/account/reset-password`;
 
   static readonly NOTIFICATIONS = `${environment.REST_API}/notifications`;
-  static readonly WS_NOTIFICATIONS = `ws://localhost:8081/ws-notifications`;
+  static readonly WS_NOTIFICATIONS = `${environment.REST_API}/ws-notifications`;
   static readonly TOPIC_NOTIFICATIONS = `topic/notifications`;
 
   static readonly QUESTIONS = `${environment.REST_API}/questions`;

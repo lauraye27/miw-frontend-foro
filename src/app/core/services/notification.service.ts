@@ -11,13 +11,12 @@ import {Notification} from '@core/models/notification.model';
 })
 export class NotificationService {
   private readonly stompClient: Client;
-  private socketUrl = Endpoints.WS_NOTIFICATIONS;
   private notificationSubject = new BehaviorSubject<Notification[]>([]);
   public notifications$ = this.notificationSubject.asObservable();
 
   constructor(private readonly httpService: HttpService) {
     this.stompClient = new Client({
-      webSocketFactory: () => new SockJS(this.socketUrl),
+      webSocketFactory: () => new SockJS(Endpoints.WS_NOTIFICATIONS),
       debug: (str) => console.log(str),
       reconnectDelay: 5000,
     });
