@@ -5,7 +5,7 @@ import {catchError, map} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 
 import {HttpService} from '@core/services/http.service';
-import {User} from '@core/models/user.model';
+import {User, UserPage} from '@core/models/user.model';
 import {Role} from '@core/models/role.model';
 import {Endpoints} from '@core/endpoints';
 
@@ -53,6 +53,15 @@ export class AuthService {
     this.router.navigate(['/login']).then();
   }
 
+  createUser(user: Partial<User>): Observable<any> {
+    return this.httpService.post(Endpoints.USERS, user).pipe(
+      map(response => {
+        console.log('User created', response);
+        return response;
+      })
+    );
+  }
+
   isAuthenticated(): boolean {
     return this.userSubject.value != null;
   }
@@ -86,6 +95,10 @@ export class AuthService {
 
   getUser(): User | null {
     return this.userSubject.value;
+  }
+
+  getUsers(): Observable<UserPage> {
+    return this.httpService.get(`${Endpoints.USERS}?page=0&size=100&sortBy=id&sortDirection=asc`);
   }
 
   private setUserFromToken(token: string) {
@@ -167,13 +180,10 @@ export class AuthService {
     return this.httpService.post(
       Endpoints.FORGOT_PASSWORD,
       { email }
-      //null,
-      //params
     ).pipe(
       tap(response => console.log('Response:', response)),
       catchError(error => {
         if (error.status === 404) {
-          //return throwError(() => error);
           throw new Error('User not found');
         } else if (error.status === 500) {
           throw new Error('Server error occurred');

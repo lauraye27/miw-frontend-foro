@@ -1,4 +1,4 @@
-import { RouterModule, Routes } from '@angular/router';
+import {ActivatedRouteSnapshot, RouterModule, Routes} from '@angular/router';
 import { NgModule } from '@angular/core';
 import { foroComponent } from './pages/foro/foro.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -11,6 +11,7 @@ import {NotificationComponent} from './notification/notification.component';
 import {MyQuestionsComponent} from './pages/my-questions/my-questions.component';
 import {QuestionComponent} from './pages/question/question.component';
 import {SearchBarComponent} from './search-bar/search-bar.component';
+import {UsersComponent} from './admin/users/users.component';
 
 export const routes: Routes = [
   { path: '', component: foroComponent },
@@ -26,6 +27,7 @@ export const routes: Routes = [
   { path: 'question', component: QuestionComponent },
   { path: 'question/:id', component: QuestionComponent },
   // { path: 'search', component: SearchBarComponent },
+  { path: 'admin/users', component: UsersComponent},
 { path: '**', redirectTo: '' },
 
 ]
