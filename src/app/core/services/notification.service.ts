@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
@@ -10,11 +10,12 @@ import {Notification} from '@core/models/notification.model';
   providedIn: 'root',
 })
 export class NotificationService {
+
   private readonly stompClient: Client;
-  private notificationSubject = new BehaviorSubject<Notification[]>([]);
+  private readonly notificationSubject = new BehaviorSubject<Notification[]>([]);
   public notifications$ = this.notificationSubject.asObservable();
 
-  constructor(private readonly httpService: HttpService) {
+  constructor(private readonly httpService: HttpService, private readonly ngZone: NgZone) {
     this.stompClient = new Client({
       webSocketFactory: () => new SockJS(Endpoints.WS_NOTIFICATIONS),
       debug: (str) => console.log(str),
@@ -22,14 +23,15 @@ export class NotificationService {
     });
   }
 
-  connect(userId: string): void {
+  connect(userId: number): void {
     this.stompClient.onConnect = (frame) => {
       this.stompClient.subscribe(
         `${Endpoints.TOPIC_NOTIFICATIONS}/${userId}`,
         (message) => {
           const notification = JSON.parse(message.body);
-          this.addNotification(notification);
-        }
+          this.ngZone.run(() => {
+            this.addNotification(notification);
+          });        }
       );
     };
     this.stompClient.onStompError = (frame) => {

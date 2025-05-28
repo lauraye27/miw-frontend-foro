@@ -27,6 +27,7 @@ import {Subscription} from 'rxjs';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
+
 export class NavbarComponent implements OnInit, OnDestroy {
 
   isAuthenticated = false;
@@ -42,8 +43,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   notifications: Notification[] = [];
   notificationSub: Subscription;
 
-  constructor(protected authService: AuthService, private router: Router, private notificationService: NotificationService,
-              private questionService: QuestionService) { }
+  constructor(protected authService: AuthService, private readonly router: Router,
+              private readonly notificationService: NotificationService, private readonly questionService: QuestionService) { }
 
   ngOnInit() {
     this.authService.user$.subscribe(user => {
@@ -52,8 +53,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.firstName = user.firstName;
         this.lastName = user.lastName;
 
-        this.notificationService.connect(user.id.toString())
-        this.loadNotifications();
+        this.notificationService.getStoredNotifications();
+        this.notificationService.connect(user.id)
 
         this.notificationSub = this.notificationService.notifications$.subscribe(notifications => {
           this.notifications = notifications;
@@ -154,5 +155,4 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout() {
     this.authService.logout();
   }
-
 }

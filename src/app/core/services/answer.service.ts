@@ -14,10 +14,10 @@ export class AnswerService {
     const answerData = {
       content: content
     };
-    return this.httpService.post(`${Endpoints.QUESTIONS}/${questionId}/answers`, answerData);
+    return this.httpService.post(`${Endpoints.ANSWERS}/${questionId}`, answerData);
   }
 
   getAnswersByQuestionId(questionId: number): Observable<any> {
-    return this.httpService.get(`${Endpoints.QUESTIONS}/${questionId}/answers`);
+    return this.httpService.get(`${Endpoints.ANSWERS}/${questionId}`);
   }
 }
