@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
-import {NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {User} from '@core/models/user.model';
 import {Router, RouterLink} from '@angular/router';
@@ -22,11 +22,13 @@ import {Subscription} from 'rxjs';
     RouterLink,
     SearchBarComponent,
     SearchBarComponent,
-    TruncatePipe
+    TruncatePipe,
+    DatePipe
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
+
 export class NavbarComponent implements OnInit, OnDestroy {
 
   isAuthenticated = false;
@@ -42,8 +44,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   notifications: Notification[] = [];
   notificationSub: Subscription;
 
-  constructor(protected authService: AuthService, private router: Router, private notificationService: NotificationService,
-              private questionService: QuestionService) { }
+  constructor(protected authService: AuthService, private readonly router: Router,
+              private readonly notificationService: NotificationService, private readonly questionService: QuestionService) { }
 
   ngOnInit() {
     this.authService.user$.subscribe(user => {
@@ -52,10 +54,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.firstName = user.firstName;
         this.lastName = user.lastName;
 
-        this.notificationService.connect(user.id.toString())
-        this.loadNotifications();
+        this.notificationService.getStoredNotifications();
+        this.notificationService.connect(user.id)
 
         this.notificationSub = this.notificationService.notifications$.subscribe(notifications => {
+          console.log('Notifications received:', notifications);
           this.notifications = notifications;
           this.unreadNotifications = notifications.filter(n => !n.read).length;
         });
@@ -154,5 +157,4 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout() {
     this.authService.logout();
   }
-
 }
