@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
-import {NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {User} from '@core/models/user.model';
 import {Router, RouterLink} from '@angular/router';
@@ -22,7 +22,8 @@ import {Subscription} from 'rxjs';
     RouterLink,
     SearchBarComponent,
     SearchBarComponent,
-    TruncatePipe
+    TruncatePipe,
+    DatePipe
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
@@ -57,6 +58,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.notificationService.connect(user.id)
 
         this.notificationSub = this.notificationService.notifications$.subscribe(notifications => {
+          console.log('Notifications received:', notifications);
           this.notifications = notifications;
           this.unreadNotifications = notifications.filter(n => !n.read).length;
         });

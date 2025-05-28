@@ -74,7 +74,9 @@
                 </div>
                 <div>
                   <div class="notification-text">{{notification.message}}</div>
-                  <small class="text-muted">{{notification.creationDate}}</small>
+                  <small class="text-muted">
+                    {{notification.creationDate | date:'dd/MM/yyyy HH:mm'}}
+                  </small>
                 </div>
               </a>
             </li>
