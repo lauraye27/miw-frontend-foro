@@ -74,18 +74,6 @@ export class AuthService {
     return this.hasRoles([Role.ADMIN]);
   }
 
-  isMember(): boolean {
-    return this.hasRoles([Role.MEMBER]);
-  }
-
-  untilAuthenticated(): boolean {
-    return this.hasRoles([Role.ADMIN, Role.MEMBER]);
-  }
-
-  getName(): string {
-    return this.userSubject.value ? this.userSubject.value.firstName : '???';
-  }
-
   getToken(): string {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('token');

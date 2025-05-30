@@ -38,7 +38,7 @@ export class QuestionService {
 
   getQuestions(page: number = 0, sortBy: string = 'creationDate', sortDirection: string = 'desc', unanswered?: boolean, tag?: string): Observable<any> {
     let params = `?page=${page}&size=10&sortBy=${sortBy}&sortDirection=${sortDirection}`;
-    if (tag) {
+    if (unanswered) {
       params += `&unanswered=${unanswered}`;
     }
     if (tag) {
@@ -47,7 +47,7 @@ export class QuestionService {
     return this.httpService.get(`${Endpoints.QUESTIONS}${params}`);
   }
 
-  getMyQuestions(email: string, page: number, size: number): Observable<any> {
+  getMyQuestions(page: number = 0): Observable<any> {
     return this.httpService.get(`${Endpoints.QUESTION_MY}?page=${page}&size=10&sortBy=creationDate&sortDirection=desc`);
   }
 

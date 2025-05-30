@@ -7,25 +7,18 @@ import {AuthService} from '@core/services/auth.service';
 import {MessageComponent} from '../../shared/message/message.component';
 import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {QuestionsPaginationComponent} from '../../shared/questions-pagination/questions-pagination.component';
 
 @Component({
   selector: 'app-my-questions',
-  imports: [
-    DatePipe,
-    NavbarComponent,
-    NgForOf,
-    RouterLink,
-    NgIf,
-    MessageComponent
-  ],
+  imports: [DatePipe, NavbarComponent, NgForOf, RouterLink, NgIf, MessageComponent, QuestionsPaginationComponent],
   templateUrl: './my-questions.component.html',
   styleUrl: './my-questions.component.css'
 })
 export class MyQuestionsComponent implements OnInit {
   questions: any[] = [];
-  currentPage = 0;
-  totalPages = 0;
-  pageSize = 10;
+  currentPage: number = 0;
+  totalPages: number = 0;
 
   errorMessage: string | null = null;
 
@@ -35,24 +28,24 @@ export class MyQuestionsComponent implements OnInit {
               protected dialog: MatDialog) {}
 
   ngOnInit() {
-    this.loadMyQuestions();
+    this.loadMyQuestions(0);
   }
 
-  loadMyQuestions(page: number = 0) {
+  loadMyQuestions(page: number): void {
     const email = this.authService.getUser()?.email;
     if (email) {
-      this.questionService.getMyQuestions(email, this.currentPage, this.pageSize)
+      this.questionService.getMyQuestions(page)
         .subscribe(response => {
           this.questions = response.content;
+          this.currentPage = response.page.number;
           this.totalPages = response.totalPages;
         });
     }
   }
 
-  changePage(page: number) {
-    if (page >= 0 && page < this.totalPages) {
-      this.currentPage = page;
-      this.loadMyQuestions();
+  changePage(newPage: number): void {
+    if (newPage >= 0 && newPage < this.totalPages && newPage !== this.currentPage) {
+      this.loadMyQuestions(newPage);
     }
   }
 

@@ -3,21 +3,21 @@ import { NavbarComponent } from '../../navbar/navbar.component';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
 import {QuestionService} from '@core/services/question.service';
-import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgForOf} from '@angular/common';
+import {QuestionsPaginationComponent} from '../../shared/questions-pagination/questions-pagination.component';
 
 @Component({
   selector: 'app-foro',
   standalone: true,
-  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, NgIf],
+  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, QuestionsPaginationComponent],
   templateUrl: './foro.component.html',
   styleUrl: './foro.component.css',
 })
 export class foroComponent implements OnInit {
 
   questions: any[] = [];
-  currentPage: number;
-  totalPages: number;
-  visiblePages: number[] = [0];
+  currentPage: number = 0;
+  totalPages: number = 0;
 
   sortField = 'creationDate';
   sortDirection = 'desc';
@@ -40,7 +40,6 @@ export class foroComponent implements OnInit {
         this.questions = res.content;
         this.currentPage = res.page.number;
         this.totalPages = res.page.totalPages;
-        this.updateVisiblePages();
       },
       error: (err) => console.error('Error loading questions', err)
     });
@@ -59,28 +58,6 @@ export class foroComponent implements OnInit {
     }
   }
 
-  updateVisiblePages(): void {
-    const maxVisible = 5;
-    this.visiblePages = [];
-
-    if (this.totalPages <= maxVisible) {
-      for (let i = 0; i < this.totalPages; i++) {
-        this.visiblePages.push(i);
-      }
-    } else {
-      let start = Math.max(0, this.currentPage - Math.floor(maxVisible / 2));
-      let end = Math.min(this.totalPages - 1, start + maxVisible - 1);
-
-      if (end === this.totalPages - 1) {
-        start = Math.max(0, end - maxVisible + 1);
-      }
-
-      for (let i = start; i <= end; i++) {
-        this.visiblePages.push(i);
-      }
-    }
-  }
-
   toggleSortByDate(): void {
     if (this.sortField === 'creationDate') {
       this.sortDirection = this.sortDirection === 'desc' ? 'asc' : 'desc';
@@ -93,6 +70,11 @@ export class foroComponent implements OnInit {
   }
 
   toggleUnansweredOnly(): void {
+    if (this.sortField === 'views') {
+      this.sortField = 'creationDate';
+      this.sortDirection = 'desc';
+      this.viewsSortDirection = null;
+    }
     this.unansweredOnly = !this.unansweredOnly;
     this.loadQuestions(0);
   }
@@ -106,6 +88,7 @@ export class foroComponent implements OnInit {
       this.viewsSortDirection = 'desc';
       this.sortDirection = 'desc';
     }
+    this.unansweredOnly = false;
     this.loadQuestions(0);
   }
 }

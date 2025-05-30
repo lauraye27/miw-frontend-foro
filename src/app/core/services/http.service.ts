@@ -22,43 +22,10 @@ export class HttpService {
     this.resetOptions();
   }
 
-  param(key: string, value: string): this {
-    if (value != null) {
-      this.params = this.params.append(key, value); // This class is immutable
-    }
-    return this;
-  }
-
-  paramsFrom(dto: any): this {
-    Object.getOwnPropertyNames(dto)
-      .forEach(item => this.param(item, dto[item]));
-    return this;
-  }
-
-  successful(notification = 'Successful'): this {
-    this.successfulMessage = notification;
-    return this;
-  }
-
   error(notification: string): this {
     this.errorMessage = notification;
     return this;
   }
-
-  pdf(): this {
-    this.responseType = 'blob';
-    this.header('Accept', 'application/pdf , application/json');
-    return this;
-  }
-
-  // post(endpoint: string, body?: object): Observable<any> {
-  //   return this.http
-  //     .post(endpoint, body, this.createOptions())
-  //     .pipe(
-  //       map(response => this.extractData(response)),
-  //       catchError(error => this.handleError(error))
-  //     );
-  // }
 
   post(endpoint: string, body?: object, params?: HttpParams): Observable<any> {
     const options = this.createOptions();
@@ -106,17 +73,6 @@ export class HttpService {
       .pipe(
         map(response => this.extractData(response)),
         catchError(error => this.handleError(error)));
-  }
-
-  authBasic(email: string, password: string): HttpService {
-    return this.header('Authorization', 'Basic ' + btoa(email + ':' + password));
-  }
-
-  header(key: string, value: string): HttpService {
-    if (value != null) {
-      this.headers = this.headers.append(key, value); // This class is immutable
-    }
-    return this;
   }
 
   private resetOptions(): void {
