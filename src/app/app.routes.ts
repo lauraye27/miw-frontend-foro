@@ -1,4 +1,4 @@
-import {ActivatedRouteSnapshot, RouterModule, Routes} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import { NgModule } from '@angular/core';
 import { foroComponent } from './pages/foro/foro.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -10,11 +10,12 @@ import {QuestionFormComponent} from './pages/question-form/question-form.compone
 import {NotificationComponent} from './notification/notification.component';
 import {MyQuestionsComponent} from './pages/my-questions/my-questions.component';
 import {QuestionComponent} from './pages/question/question.component';
-import {SearchBarComponent} from './search-bar/search-bar.component';
 import {UsersComponent} from './admin/users/users.component';
+import {TagComponent} from './pages/tag/tag.component';
+import {TagsComponent} from './admin/tags/tags.component';
 
 export const routes: Routes = [
-  { path: '', component: foroComponent },
+  { path: 'questions', component: foroComponent },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: 'profile', component: ProfileComponent },
@@ -26,9 +27,10 @@ export const routes: Routes = [
   { path: 'my-questions', component: MyQuestionsComponent },
   { path: 'question', component: QuestionComponent },
   { path: 'question/:id', component: QuestionComponent },
-  // { path: 'search', component: SearchBarComponent },
-  { path: 'admin/users', component: UsersComponent},
-{ path: '**', redirectTo: '' },
+  { path: 'tags', component: TagComponent },
+  { path: 'admin/users', component: UsersComponent },
+  { path: 'admin/tags', component: TagsComponent },
+{ path: '**', redirectTo: 'questions' },
 
 ]
 

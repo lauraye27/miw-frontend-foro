@@ -1,0 +1,12 @@
+.tag-badge {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.tag-badge:hover {
+  transform: scale(1.05);
+}
+
+.tag-badge .badge {
+  font-size: 1rem;
+}

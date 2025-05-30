@@ -1,0 +1,34 @@
+<app-navbar></app-navbar>
+<app-message
+  [errorMessage]="errorMessage"
+></app-message>
+
+<div class="container mt-4">
+  <h2>Tags Management</h2>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <table class="table table-bordered mt-3" *ngIf="tags.length">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Usage Count</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let tag of tags">
+      <td>{{ tag.name }}</td>
+      <td>{{ tag.questionCount || 0 }}</td>
+      <td>
+        <button class="btn btn-sm btn-danger" (click)="deleteTag(tag.id)">
+          Delete
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!tags.length" class="text-muted">No tags found</p>
+</div>
+
