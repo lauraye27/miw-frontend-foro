@@ -11,3 +11,9 @@ export interface Question {
   tags: string[];
   answers: Answer[];
 }
+
+export interface QuestionForm {
+  title: string;
+  description: string;
+  tags: string[];
+}

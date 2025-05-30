@@ -66,7 +66,7 @@ export class MyQuestionsComponent implements OnInit {
   onEditQuestion(questionId: number, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.router.navigate(['/question-form', questionId]);
+    this.router.navigate(['/question-form', questionId]).then();
   }
 
   onDeleteQuestion(questionId: number): void {

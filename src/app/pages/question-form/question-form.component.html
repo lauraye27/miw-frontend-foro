@@ -18,13 +18,34 @@
     <div class="mb-3">
       <label for="description" class="form-label">Description</label>
       <textarea id="description" rows="8" class="form-control" placeholder="Question description"
-        [(ngModel)]="question.description" name="description" required
+                [(ngModel)]="question.description" name="description" required
       ></textarea>
     </div>
 
     <div class="mb-3">
-      <label for="tags" class="form-label">Tags <small class="text-muted"></small></label>
-      <input type="text" id="tags" class="form-control" placeholder="Add tags" disabled>
+      <label for="tags" class="form-label">Tags</label>
+      <input type="text" id="tags" name="tagInput" class="form-control" placeholder="Add a tag"
+             [(ngModel)]="newTag" [ngModelOptions]="{ standalone: true }" (input)="onTagInputChange()" (keydown.enter)="addTag(); $event.preventDefault()"
+             [disabled]="question.tags.length >= 5"
+      />
+      <div class="dropdown-menu d-block" *ngIf="newTag.trim() || filteredTags.length">
+        <a class="dropdown-item text-primary" *ngIf="!isTagInList(newTag)" (click)="addTag()">
+          Add "{{ newTag.trim().toLowerCase() }}"
+        </a>
+
+        <a class="dropdown-item" *ngFor="let tag of filteredTags" (click)="selectTag(tag)">
+          {{ tag }}
+        </a>
+      </div>
+      <div class="mt-2">
+        <span *ngFor="let tag of question.tags" class="badge bg-secondary me-1" (click)="removeTag(tag)" style="cursor: pointer;">
+          {{ tag }} &times;
+        </span>
+      </div>
+
+      <small class="text-muted" *ngIf="question.tags.length >= 5">
+        Maximum 5 tags
+      </small>
     </div>
 
     <button type="submit" class="btn btn-primary" [disabled]="!questionForm.valid">

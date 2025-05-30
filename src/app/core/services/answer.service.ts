@@ -11,13 +11,13 @@ export class AnswerService {
   constructor(private readonly httpService: HttpService) {}
 
   createAnswer(questionId: number, content: string): Observable<any> {
-    const answerData = {
-      content: content
-    };
-    return this.httpService.post(`${Endpoints.ANSWERS}/${questionId}`, answerData);
+    let params = `?questionId=${questionId}`;
+    const answerData = { content: content };
+    return this.httpService.post(`${Endpoints.ANSWERS}${params}`, answerData);
   }
 
   getAnswersByQuestionId(questionId: number): Observable<any> {
-    return this.httpService.get(`${Endpoints.ANSWERS}/${questionId}`);
+    let params = `?questionId=${questionId}`;
+    return this.httpService.get(`${Endpoints.ANSWERS}${params}`);
   }
 }

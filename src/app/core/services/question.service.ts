@@ -12,7 +12,7 @@ export class QuestionService {
 
   constructor(private readonly httpService: HttpService) { }
 
-  createQuestion(question: any): Observable<any> {
+  createQuestion(question: any): Observable<Question> {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -28,7 +28,7 @@ export class QuestionService {
     );
   }
 
-  updateQuestion(questionId: number, questionData: any): Observable<any> {
+  updateQuestion(questionId: number, questionData: any): Observable<Question> {
     return this.httpService.put(`${Endpoints.QUESTIONS}/${questionId}`, questionData);
   }
 
@@ -36,8 +36,14 @@ export class QuestionService {
     return this.httpService.delete(`${Endpoints.QUESTIONS}/${questionId}`);
   }
 
-  getQuestions(page: number = 0, sortBy: string = 'creationDate', sortDirection: string = 'desc', unanswered: boolean): Observable<any> {
-    let params = `?page=${page}&size=10&sortBy=${sortBy}&sortDirection=${sortDirection}&unanswered=${unanswered}`;
+  getQuestions(page: number = 0, sortBy: string = 'creationDate', sortDirection: string = 'desc', unanswered?: boolean, tag?: string): Observable<any> {
+    let params = `?page=${page}&size=10&sortBy=${sortBy}&sortDirection=${sortDirection}`;
+    if (tag) {
+      params += `&unanswered=${unanswered}`;
+    }
+    if (tag) {
+      params += `&tag=${encodeURIComponent(tag)}`;
+    }
     return this.httpService.get(`${Endpoints.QUESTIONS}${params}`);
   }
 
@@ -75,8 +81,4 @@ export class QuestionService {
       })
     );
   }
-
-  // searchSuggestions(query: string): Observable<any[]> {
-  //   return this.httpService.get(`${Endpoints.QUESTIONS}/suggestions?query=${query}`);
-  // }
 }

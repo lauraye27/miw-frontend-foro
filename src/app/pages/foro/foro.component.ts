@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { NavbarComponent } from '../../navbar/navbar.component';
-import {Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
 import {QuestionService} from '@core/services/question.service';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
@@ -24,14 +24,18 @@ export class foroComponent implements OnInit {
   unansweredOnly = false;
   viewsSortDirection: 'desc' | 'asc' | null = null;
 
-  constructor(private router: Router, protected authService: AuthService, private questionService: QuestionService) {}
+  constructor(private router: Router, private route: ActivatedRoute,
+              protected authService: AuthService, private questionService: QuestionService) {}
 
   ngOnInit() {
-    this.loadQuestions();
+    this.route.queryParams.subscribe(params => {
+      const tag = params['tag'] || null;
+      this.loadQuestions(0, tag);
+    });
   }
 
-  loadQuestions(page: number = 0): void {
-    this.questionService.getQuestions(page, this.sortField, this.sortDirection, this.unansweredOnly).subscribe({
+  loadQuestions(page: number = 0, tag?: string): void {
+    this.questionService.getQuestions(page, this.sortField, this.sortDirection, this.unansweredOnly, tag).subscribe({
       next: (res) => {
         this.questions = res.content;
         this.currentPage = res.page.number;
