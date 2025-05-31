@@ -1,12 +1,19 @@
-.tag-badge {
+.tag-card {
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background-color: #fff;
 }
 
-.tag-badge:hover {
-  transform: scale(1.05);
+.tag-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.tag-badge .badge {
-  font-size: 1rem;
+.tag-card h6 {
+  margin-bottom: 0.5rem;
+}
+
+.tag-card p {
+  font-size: 0.875rem;
+  min-height: 40px;
 }

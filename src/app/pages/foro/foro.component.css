@@ -1,6 +1,7 @@
 body {
   background-color: #f4f4f4;
 }
+
 .card {
   border: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -10,13 +11,22 @@ body {
 .card:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
+
 .list-group-item {
   border: none;
   margin-bottom: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .list-group-item:hover {
   background-color: #f8f9fa;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.custom-tag {
+  background-color: #e69129;
+  color: white;
+  font-weight: 500;
+  border-radius: 10px;
 }

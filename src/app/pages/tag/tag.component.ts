@@ -13,7 +13,6 @@ import {Tag} from '@core/models/tag.model';
   imports: [
     MessageComponent,
     NavbarComponent,
-    NgIf,
     NgForOf,
     FormsModule
   ],
@@ -24,7 +23,7 @@ export class TagComponent implements OnInit {
   tags: Tag[] = [];
   filteredTags: Tag[] = [];
   searchQuery: string = '';
-  isLoading = false;
+
   errorMessage: string | null = null;
 
   constructor(
@@ -38,16 +37,13 @@ export class TagComponent implements OnInit {
   }
 
   loadAllTags(): void {
-    this.isLoading = true;
     this.tagService.getAllTags().subscribe({
       next: (tags) => {
         this.tags = tags;
         this.filteredTags = [...tags];
-        this.isLoading = false;
       },
       error: (err) => {
         this.errorMessage = 'Error loading tags';
-        this.isLoading = false;
         console.error(err);
       }
     });
@@ -59,15 +55,12 @@ export class TagComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true;
     this.tagService.searchTags(this.searchQuery).subscribe({
       next: (tags) => {
         this.filteredTags = tags;
-        this.isLoading = false;
       },
       error: (err) => {
         this.errorMessage = 'Error searching tags';
-        this.isLoading = false;
         console.error(err);
       }
     });

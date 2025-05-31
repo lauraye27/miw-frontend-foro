@@ -64,22 +64,25 @@
     </div>
   </div>
 
-  <table class="table table-hover">
-    <thead>
-    <tr>
-      <th>#</th>
-      <th>Email</th>
-      <th>Username</th>
-      <th>Role</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let user of users; index as i">
-      <td>{{ i + 1 }}</td>
-      <td>{{ user.email }}</td>
-      <td>{{ user.userName }}</td>
-      <td>{{ user.role }}</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="list-group mb-4">
+    <div *ngFor="let user of users" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      <div class="d-flex flex-grow-1 justify-content-between align-items-center">
+        <div class="me-3" style="min-width: 30%;">
+          <h6 class="mb-0">{{ user.userName }}</h6>
+        </div>
+        <div class="me-3" style="min-width: 35%;">
+          <small class="text-muted">{{ user.email }}</small>
+        </div>
+        <div style="min-width: 20%;">
+        <span class="badge custom-role mt-1">
+          {{ user.role }}
+        </span>
+        </div>
+
+        <div>
+          <button class="btn btn-sm btn-outline-danger" (click)="onDeleteUser(user.id)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

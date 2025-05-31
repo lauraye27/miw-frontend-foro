@@ -6,6 +6,9 @@ import {User} from '@core/models/user.model';
 import {Role} from '@core/models/role.model';
 import {FormsModule} from '@angular/forms';
 import {MessageComponent} from '../../shared/message/message.component';
+import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-users',
@@ -37,7 +40,7 @@ export class UsersComponent implements OnInit {
 
   showForm: boolean = false;
 
-  constructor(public auth: AuthService) {}
+  constructor(private router: Router, public auth: AuthService, protected dialog: MatDialog) {}
 
   ngOnInit() {
     this.loadUsers();
@@ -90,6 +93,30 @@ export class UsersComponent implements OnInit {
     this.auth.getUsers().subscribe({
       next: (data) => this.users = data.content,
       error: (err) => console.error('Error loading users', err)
+    });
+  }
+
+  onDeleteUser(id: number) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete User',
+        message: 'Are you sure you want to delete this user?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.auth.deleteUser(id).subscribe({
+          next: () => {
+            this.users = this.users.filter(u => u.id !== id);
+            this.router.navigate(['/admin/users']).then();
+          },
+          error: err => {
+            this.errorMessage = 'An error occurred while deleting the user';
+          }
+        });
+      }
     });
   }
 }

@@ -10,7 +10,7 @@
       <h1 class="card-title">{{ question?.title }}</h1>
       <div class="d-flex justify-content-between align-items-center mb-3">
         <small class="text-muted">
-          Asked by {{ question?.author }} on {{ question?.creationDate | date:'medium' }}
+          Asked by {{ question?.author }} on {{ question?.creationDate | date:'dd/MM/yyyy HH:mm' }}
         </small>
         <span class="badge bg-primary">{{ question?.views || 0 }} views</span>
       </div>
@@ -30,7 +30,7 @@
       <div class="d-flex justify-content-between mb-2">
         <div>
           <strong>{{ answer.author }}</strong>
-          <small class="text-muted ms-2">{{ answer.creationDate | date:'short' }}</small>
+          <small class="text-muted ms-2">{{ answer.creationDate | date:'dd/MM/yyyy HH:mm' }}</small>
         </div>
       </div>
       <p>{{ answer.content }}</p>
