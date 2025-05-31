@@ -3,19 +3,21 @@ import { NavbarComponent } from '../../navbar/navbar.component';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
 import {QuestionService} from '@core/services/question.service';
-import {DatePipe, NgForOf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {QuestionsPaginationComponent} from '../../shared/questions-pagination/questions-pagination.component';
+import {TruncatePipe} from '@core/truncate.pipe';
+import {Question} from '@core/models/question.model';
 
 @Component({
   selector: 'app-foro',
   standalone: true,
-  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, QuestionsPaginationComponent],
+  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, QuestionsPaginationComponent, TruncatePipe, NgIf],
   templateUrl: './foro.component.html',
   styleUrl: './foro.component.css',
 })
 export class foroComponent implements OnInit {
 
-  questions: any[] = [];
+  questions: Question[] = [];
   currentPage: number = 0;
   totalPages: number = 0;
 

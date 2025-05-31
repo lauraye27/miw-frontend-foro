@@ -14,7 +14,6 @@ export class Endpoints {
   static readonly TOPIC_NOTIFICATIONS = `/topic/notifications`;
 
   static readonly QUESTIONS = `${environment.REST_API}/questions`;
-  static readonly QUESTION_SEARCH = `${Endpoints.QUESTIONS}/search`;
   static readonly QUESTION_MY = `${Endpoints.QUESTIONS}/myQuestions`;
 
   static readonly ANSWERS = `${environment.REST_API}/answers`;
