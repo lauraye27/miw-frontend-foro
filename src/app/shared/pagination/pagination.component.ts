@@ -2,15 +2,15 @@ import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '
 import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
-  selector: 'app-questions-pagination',
+  selector: 'app-pagination',
   imports: [
     NgIf,
     NgForOf
   ],
-  templateUrl: './questions-pagination.component.html',
-  styleUrl: './questions-pagination.component.css'
+  templateUrl: './pagination.component.html',
+  styleUrl: './pagination.component.css'
 })
-export class QuestionsPaginationComponent implements OnChanges {
+export class PaginationComponent implements OnChanges {
   @Input() currentPage: number = 0;
   @Input() totalPages: number = 0;
   @Input() maxVisiblePages: number = 5;

@@ -7,16 +7,17 @@ import {AuthService} from '@core/services/auth.service';
 import {MessageComponent} from '../../shared/message/message.component';
 import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {QuestionsPaginationComponent} from '../../shared/questions-pagination/questions-pagination.component';
+import {PaginationComponent} from '../../shared/pagination/pagination.component';
+import {Question} from '@core/models/question.model';
 
 @Component({
   selector: 'app-my-questions',
-  imports: [DatePipe, NavbarComponent, NgForOf, RouterLink, NgIf, MessageComponent, QuestionsPaginationComponent],
+  imports: [DatePipe, NavbarComponent, NgForOf, RouterLink, NgIf, MessageComponent, PaginationComponent],
   templateUrl: './my-questions.component.html',
   styleUrl: './my-questions.component.css'
 })
 export class MyQuestionsComponent implements OnInit {
-  questions: any[] = [];
+  questions: Question[] = [];
   currentPage: number = 0;
   totalPages: number = 0;
 
@@ -29,21 +30,17 @@ export class MyQuestionsComponent implements OnInit {
     this.loadMyQuestions(0);
   }
 
-  loadMyQuestions(page: number): void {
+  loadMyQuestions(page: number = 0): void {
     const email = this.authService.getUser()?.email;
     if (email) {
-      this.questionService.getMyQuestions(page)
-        .subscribe(response => {
+      this.questionService.getMyQuestions(page).subscribe({
+        next: (response) => {
           this.questions = response.content;
           this.currentPage = response.page.number;
-          this.totalPages = response.totalPages;
-        });
-    }
-  }
-
-  changePage(newPage: number): void {
-    if (newPage >= 0 && newPage < this.totalPages && newPage !== this.currentPage) {
-      this.loadMyQuestions(newPage);
+          this.totalPages = response.page.totalPages;
+        },
+        error: (err) => console.error('Error loading my-questions', err)
+      });
     }
   }
 
@@ -51,6 +48,12 @@ export class MyQuestionsComponent implements OnInit {
     console.log('onAskClick');
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/question-form']).then();
+    }
+  }
+
+  changePage(newPage: number): void {
+    if (newPage >= 0 && newPage < this.totalPages && newPage !== this.currentPage) {
+      this.loadMyQuestions(newPage);
     }
   }
 

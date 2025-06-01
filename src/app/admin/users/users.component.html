@@ -147,4 +147,11 @@
       </div>
     </div>
   </div>
+
+  <app-pagination
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    [maxVisiblePages]="5"
+    (pageChange)="changePage($event)">
+  </app-pagination>
 </div>

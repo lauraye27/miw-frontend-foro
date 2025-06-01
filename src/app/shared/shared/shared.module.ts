@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MessageComponent} from '../message/message.component';
 import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
-import {QuestionsPaginationComponent} from '../questions-pagination/questions-pagination.component';
+import {PaginationComponent} from '../pagination/pagination.component';
 
 
 @NgModule({
@@ -11,8 +11,8 @@ import {QuestionsPaginationComponent} from '../questions-pagination/questions-pa
     CommonModule,
     MessageComponent,
     ConfirmationDialogComponent,
-    QuestionsPaginationComponent
+    PaginationComponent
   ],
-  exports: [MessageComponent, ConfirmationDialogComponent, QuestionsPaginationComponent],
+  exports: [MessageComponent, ConfirmationDialogComponent, PaginationComponent],
 })
 export class SharedModule { }

@@ -9,6 +9,7 @@ import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/conf
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {FormUtilsService} from '../../shared/services/form-utils.service';
+import {PaginationComponent} from '../../shared/pagination/pagination.component';
 
 @Component({
   selector: 'app-users',
@@ -19,18 +20,22 @@ import {FormUtilsService} from '../../shared/services/form-utils.service';
     NgIf,
     MessageComponent,
     ReactiveFormsModule,
-    NgClass
+    NgClass,
+    PaginationComponent
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
 export class UsersComponent implements OnInit {
   users: User[] = [];
+  currentPage: number = 0;
+  totalPages: number = 0;
+
   userForm: FormGroup;
+  showForm: boolean = false;
 
   errorMessage: string | null = null;
   successMessage: string | null = null;
-  showForm: boolean = false;
 
   constructor(private router: Router, public auth: AuthService, private fb: FormBuilder,
               public formUtils: FormUtilsService, private cdr: ChangeDetectorRef, protected dialog: MatDialog) {
@@ -117,11 +122,21 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  loadUsers() {
-    this.auth.getUsers().subscribe({
-      next: (data) => this.users = data.content,
+  loadUsers(page: number = 0): void {
+    this.auth.getUsers(page).subscribe({
+      next: (data) => {
+        this.users = data.content;
+        this.currentPage = data.page.number;
+        this.totalPages = data.page.totalPages;
+      },
       error: (err) => console.error('Error loading users', err)
     });
+  }
+
+  changePage(newPage: number): void {
+    if (newPage >= 0 && newPage < this.totalPages && newPage !== this.currentPage) {
+      this.loadUsers(newPage);
+    }
   }
 
   onDeleteUser(id: number) {

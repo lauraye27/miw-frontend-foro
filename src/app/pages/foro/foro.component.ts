@@ -4,7 +4,7 @@ import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
 import {QuestionService} from '@core/services/question.service';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
-import {QuestionsPaginationComponent} from '../../shared/questions-pagination/questions-pagination.component';
+import {PaginationComponent} from '../../shared/pagination/pagination.component';
 import {TruncatePipe} from '@core/truncate.pipe';
 import {Question} from '@core/models/question.model';
 import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
@@ -14,7 +14,7 @@ import {MessageComponent} from '../../shared/message/message.component';
 @Component({
   selector: 'app-foro',
   standalone: true,
-  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, QuestionsPaginationComponent, TruncatePipe, NgIf, MessageComponent],
+  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, PaginationComponent, TruncatePipe, NgIf, MessageComponent],
   templateUrl: './foro.component.html',
   styleUrl: './foro.component.css',
 })

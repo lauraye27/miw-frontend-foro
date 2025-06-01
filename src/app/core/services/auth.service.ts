@@ -88,8 +88,8 @@ export class AuthService {
     return this.userSubject.value;
   }
 
-  getUsers(): Observable<UserPage> {
-    return this.httpService.get(`${Endpoints.USERS}?page=0&size=10&sortBy=id&sortDirection=asc`);
+  getUsers(page: number = 0): Observable<UserPage> {
+    return this.httpService.get(`${Endpoints.USERS}?page=${page}&size=10&sortBy=id&sortDirection=asc`);
   }
 
   private setUserFromToken(token: string) {
