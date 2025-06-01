@@ -1,30 +1,18 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
-import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgForOf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {User} from '@core/models/user.model';
 import {Router, RouterLink} from '@angular/router';
 import {Notification} from '@core/models/notification.model';
 import {NotificationService} from '@core/services/notification.service';
 import {SearchBarComponent} from '../search-bar/search-bar.component';
-import {Question} from '@core/models/question.model';
-import {QuestionService} from '@core/services/question.service';
-import {TruncatePipe} from '@core/truncate.pipe';
 import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [
-    NgIf,
-    FormsModule,
-    NgForOf,
-    RouterLink,
-    SearchBarComponent,
-    SearchBarComponent,
-    TruncatePipe,
-    DatePipe
-  ],
+  imports: [ FormsModule, NgForOf, RouterLink, SearchBarComponent, DatePipe ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
@@ -37,15 +25,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   user: User | null = null;
 
   searchQuery = '';
-  searchResults: Question[] | null = null;
-  showSearchResults = false;
 
   unreadNotifications = 0;
   notifications: Notification[] = [];
   notificationSub: Subscription;
 
   constructor(protected authService: AuthService, private readonly router: Router,
-              private readonly notificationService: NotificationService, private readonly questionService: QuestionService) { }
+              private readonly notificationService: NotificationService) { }
 
   ngOnInit() {
     this.authService.user$.subscribe(user => {
@@ -73,42 +59,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   onSearch(query: string): void {
-    this.searchQuery = query.trim();
-    if (!this.searchQuery) {
-      this.searchResults = null;
-      this.showSearchResults = false;
-      return;
-    }
-
-    this.questionService.searchQuestions(this.searchQuery, 0, 5).subscribe({
-      next: response => {
-        this.searchResults = response?.content || [];
-        this.showSearchResults = true;
-      },
-      error: err => {
-        console.error('Search error:', err);
-        this.searchResults = null;
-        this.showSearchResults = false;
-      }
-    });
-  }
-
-  onLiveResults(results: any[]) {
-    this.searchResults = results;
-    this.showSearchResults = results.length > 0;
-  }
-
-  hideSearchResults(): void {
-    setTimeout(() => {
-      this.showSearchResults = false;
-    }, 200);
-  }
-
-  navigateToQuestion(questionId: number): void {
-    this.showSearchResults = false;
-    this.searchQuery = '';
-    this.searchResults = null;
-    this.router.navigate(['/question', questionId]).then();
+    this.searchQuery = query;
   }
 
   loadNotifications(): void {

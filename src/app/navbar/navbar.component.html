@@ -17,36 +17,11 @@
     </ul>
 
     <div class="d-flex position-relative mx-3 flex-grow-1">
-      <app-search-bar
-        (searchExecuted)="onSearch($event)"
-        (liveResults)="onLiveResults($event)"
-        (clickOutside)="hideSearchResults()"
-        class="w-100">
-      </app-search-bar>
-
-      <div *ngIf="showSearchResults && searchResults"
-           class="search-results-dropdown position-absolute top-100 start-0 end-0 z-3 mt-1">
-        <div class="card">
-          <div class="card-body p-2">
-            <div *ngIf="searchResults.length > 0; else noResults">
-              <div *ngFor="let question of searchResults"
-                   class="search-result-item p-2 border-bottom"
-                   (click)="navigateToQuestion(question.id)">
-                <h6 class="mb-1">{{ question.title }}</h6>
-                <small class="text-muted">
-                  {{ question.description | truncate:50 }}
-                </small>
-              </div>
-            </div>
-            <ng-template #noResults>
-              <div class="text-center p-2 text-muted">
-                No results found for "{{ searchQuery }}"
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-search-bar
+      (searchExecuted)="onSearch($event)"
+      class="w-100">
+    </app-search-bar>
+  </div>
 
     <div class="user-section">
       <ul class="navbar-nav">

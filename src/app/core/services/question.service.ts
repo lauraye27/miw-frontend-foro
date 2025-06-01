@@ -71,9 +71,10 @@ export class QuestionService {
     );
   }
 
-  searchQuestions(query: string, page: number = 0, size: number = 10): Observable<any> {
+  searchQuestionsAndAnswers(query: string, page: number = 0, size: number = 10): Observable<any> {
+    console.log('Searching for:', query);
     return this.httpService.get(
-      `${Endpoints.QUESTIONS}/search?query=${query}&page=${page}&size=${size}`
+      `${Endpoints.QUESTIONS}/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`
     ).pipe(
       catchError(error => {
         console.error('Error searching questions:', error);

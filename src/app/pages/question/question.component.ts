@@ -7,6 +7,8 @@ import {QuestionService} from '@core/services/question.service';
 import {AuthService} from '@core/services/auth.service';
 import {AnswerService} from '@core/services/answer.service';
 import {MessageComponent} from '../../shared/message/message.component';
+import {Question} from '@core/models/question.model';
+import {Answer} from '@core/models/answer.model';
 
 @Component({
   selector: 'app-question',
@@ -22,8 +24,8 @@ import {MessageComponent} from '../../shared/message/message.component';
   styleUrl: './question.component.css'
 })
 export class QuestionComponent implements OnInit {
-  question: any | null = null;
-  answers: any[] = [];
+  question: Question | null = null;
+  answers: Answer[] = [];
   newAnswer: { content: string } = { content: '' };
 
   errorMessage: string | null = null;
@@ -36,14 +38,19 @@ export class QuestionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      const questionId = Number(id);
+    // const id = this.route.snapshot.paramMap.get('id');
+    // if (id) {
+    //   const questionId = Number(id);
+    //   this.loadQuestion(questionId);
+    //   this.loadAnswers(questionId);
+    // } else {
+    //   this.errorMessage = 'Question ID not provided';
+    // }
+    this.route.paramMap.subscribe(params => {
+      const questionId = Number(params.get('id'));
       this.loadQuestion(questionId);
       this.loadAnswers(questionId);
-    } else {
-      this.errorMessage = 'Question ID not provided';
-    }
+    });
   }
 
   loadQuestion(id: number): void {
@@ -72,9 +79,9 @@ export class QuestionComponent implements OnInit {
     });
   }
 
-  isQuestionAuthor(): boolean {
-    return this.authService.getUser()?.email === this.question?.authorEmail;
-  }
+  // isQuestionAuthor(): boolean {
+  //   return this.authService.getUser()?.email === this.question?.authorEmail;
+  // }
 
   addAnswer(): void {
     if (!this.question?.id) return;
