@@ -53,11 +53,14 @@ export class AuthService {
     this.router.navigate(['/login']).then();
   }
 
-  createUser(user: Partial<User>): Observable<any> {
+  createUser(user: Partial<User>): Observable<User> {
     return this.httpService.post(Endpoints.USERS, user).pipe(
       map(response => {
         console.log('User created', response);
         return response;
+      }),
+      catchError(error => {
+        return throwError(() => error);
       })
     );
   }
@@ -86,7 +89,7 @@ export class AuthService {
   }
 
   getUsers(): Observable<UserPage> {
-    return this.httpService.get(`${Endpoints.USERS}?page=0&size=100&sortBy=id&sortDirection=asc`);
+    return this.httpService.get(`${Endpoints.USERS}?page=0&size=10&sortBy=id&sortDirection=asc`);
   }
 
   private setUserFromToken(token: string) {

@@ -4,12 +4,13 @@ import { NavbarComponent } from '../../navbar/navbar.component';
 import { AuthService } from '@core/services/auth.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MessageComponent} from '../../shared/message/message.component';
+import {FormUtilsService} from '../../shared/services/form-utils.service';
 
 @Component({
   selector: 'app-login',
-  imports: [NavbarComponent, ReactiveFormsModule, FormsModule, MessageComponent, NgIf],
+  imports: [NavbarComponent, ReactiveFormsModule, FormsModule, MessageComponent, NgIf, NgClass],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -19,7 +20,8 @@ export class LoginComponent {
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  constructor(private router: Router, private authService: AuthService, private readonly dialog: MatDialog) {}
+  constructor(private router: Router, private authService: AuthService, private readonly dialog: MatDialog,
+              public formUtils: FormUtilsService) {}
 
   login() {
     this.errorMessage = null;

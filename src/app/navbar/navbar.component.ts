@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
-import {DatePipe, NgForOf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {User} from '@core/models/user.model';
 import {Router, RouterLink} from '@angular/router';
@@ -12,7 +12,7 @@ import {Subscription} from 'rxjs';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [ FormsModule, NgForOf, RouterLink, SearchBarComponent, DatePipe ],
+  imports: [FormsModule, NgForOf, RouterLink, SearchBarComponent, DatePipe, NgIf],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })

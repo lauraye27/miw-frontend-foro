@@ -44,8 +44,8 @@
       <div class="input-group">
         <input type="password" id="password" class="form-control" formControlName="currentPassword" required>
         <button type="button" class="btn btn-outline-secondary input-group-text"
-          (click)="togglePasswordVisibility('password')">
-          <i class="fa-solid" [ngClass]="showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+          (click)="formUtils.togglePasswordVisibility('password')">
+          <i class="fa-solid" [ngClass]="formUtils.showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
       <small class="text-danger" *ngIf="userProfileForm.get('currentPassword').invalid && formUtils.isTouched(userProfileForm,'currentPassword')">
@@ -60,8 +60,8 @@
       <div class="input-group">
         <input type="password" id="newPassword" class="form-control" formControlName="newPassword" required>
         <button type="button" class="btn btn-outline-secondary input-group-text"
-          (click)="togglePasswordVisibility('newPassword')">
-          <i class="fa-solid" [ngClass]="showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+          (click)="formUtils.togglePasswordVisibility('newPassword')">
+          <i class="fa-solid" [ngClass]="formUtils.showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
       <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && formUtils.isTouched(userProfileForm,'newPassword')">
@@ -83,8 +83,8 @@
       <div class="input-group">
         <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required>
         <button type="button" class="btn btn-outline-secondary input-group-text"
-                (click)="togglePasswordVisibility('confirmPassword')">
-          <i class="fa-solid" [ngClass]="showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+                (click)="formUtils.togglePasswordVisibility('confirmPassword')">
+          <i class="fa-solid" [ngClass]="formUtils.showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
       <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && formUtils.isTouched(userProfileForm,'confirmPassword')">

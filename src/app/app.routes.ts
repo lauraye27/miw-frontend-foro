@@ -16,11 +16,12 @@ import {TagsComponent} from './admin/tags/tags.component';
 import {Role} from '@core/models/role.model';
 import {RoleGuardService} from '@core/services/role-guard.service';
 import {NotFoundComponent} from './shared/not-found/not-found.component';
+import {AuthRedirectGuard} from '@core/services/auth-redirect-guard.service';
 
 export const routes: Routes = [
   { path: 'questions', component: foroComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'registro', component: RegistroComponent },
+  { path: 'login', component: LoginComponent, canActivate: [AuthRedirectGuard] },
+  { path: 'registro', component: RegistroComponent, canActivate: [AuthRedirectGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },

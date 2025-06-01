@@ -7,11 +7,14 @@ import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {QuestionsPaginationComponent} from '../../shared/questions-pagination/questions-pagination.component';
 import {TruncatePipe} from '@core/truncate.pipe';
 import {Question} from '@core/models/question.model';
+import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {MessageComponent} from '../../shared/message/message.component';
 
 @Component({
   selector: 'app-foro',
   standalone: true,
-  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, QuestionsPaginationComponent, TruncatePipe, NgIf],
+  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, QuestionsPaginationComponent, TruncatePipe, NgIf, MessageComponent],
   templateUrl: './foro.component.html',
   styleUrl: './foro.component.css',
 })
@@ -26,7 +29,9 @@ export class foroComponent implements OnInit {
   unansweredOnly = false;
   viewsSortDirection: 'desc' | 'asc' | null = null;
 
-  constructor(private router: Router, private route: ActivatedRoute,
+  errorMessage: string | null = null;
+
+  constructor(private router: Router, private route: ActivatedRoute, protected dialog: MatDialog,
               protected authService: AuthService, private questionService: QuestionService) {}
 
   ngOnInit() {
@@ -92,5 +97,29 @@ export class foroComponent implements OnInit {
     }
     this.unansweredOnly = false;
     this.loadQuestions(0);
+  }
+
+  onDeleteQuestion(questionId: number): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Question',
+        message: 'Are you sure you want to delete this question?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.questionService.deleteQuestion(questionId).subscribe({
+          next: () => {
+            this.questions = this.questions.filter(q => q.id !== questionId);
+            this.router.navigate(['/questions']).then();
+          },
+          error: err => {
+            this.errorMessage = 'An error occurred while deleting the question';
+          }
+        });
+      }
+    });
   }
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {NavbarComponent} from "../../navbar/navbar.component";
 import {Router, RouterLink} from '@angular/router';
@@ -21,8 +21,6 @@ export class MyQuestionsComponent implements OnInit {
   totalPages: number = 0;
 
   errorMessage: string | null = null;
-
-  @ViewChild('deleteConfirmationTemplate') deleteConfirmationTemplate!: TemplateRef<any>;
 
   constructor(private router: Router, private questionService: QuestionService, private authService: AuthService,
               protected dialog: MatDialog) {}

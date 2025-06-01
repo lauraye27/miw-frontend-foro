@@ -1,13 +1,12 @@
 <app-navbar></app-navbar>
+<app-message
+  [successMessage]="successMessage"
+  [errorMessage]="errorMessage"
+></app-message>
 
 <div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
   <div class="card shadow-lg p-4" style="width: 350px; border-radius: 12px">
     <h2 class="text-center mb-4">Log in</h2>
-
-    <app-message
-      [successMessage]="successMessage"
-      [errorMessage]="errorMessage"
-    ></app-message>
 
     <form (ngSubmit)="login()">
       <div class="mb-3">
@@ -17,8 +16,14 @@
 
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" class="form-control" placeholder="Password" [(ngModel)]="password" name="password" required
-               #passwordRef="ngModel"/>
+        <div class="input-group">
+          <input type="password" id="password" class="form-control" placeholder="8+ characters" [(ngModel)]="password" name="password" required
+                 #passwordRef="ngModel"/>
+          <button type="button" class="btn btn-outline-secondary input-group-text"
+                  (click)="formUtils.togglePasswordVisibility('password')">
+            <i class="fa-solid" [ngClass]="formUtils.showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
         <small class="text-danger" *ngIf="passwordRef.invalid && (passwordRef.touched || passwordRef.dirty)">
           Password is required
         </small>

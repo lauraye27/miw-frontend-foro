@@ -27,11 +27,7 @@ export class ProfileComponent  implements OnInit {
   userProfileForm: FormGroup;
   user: User = null;
   isEditMode: boolean = false;
-  showPasswords: { [key: string]: boolean } = {
-    password: false,
-    newPassword: false,
-    confirmPassword: false
-  };
+
   showPasswordSection: boolean = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
@@ -53,7 +49,7 @@ export class ProfileComponent  implements OnInit {
           ]],
           confirmPassword: ['']
         }, {
-      validators: this.passwordMatchValidator
+      validators: formUtils.passwordMatchValidator('newPassword'),
     });
   }
 
@@ -82,18 +78,6 @@ export class ProfileComponent  implements OnInit {
         console.error('Error fetching user details:', error);
       }
     );
-  }
-
-  togglePasswordVisibility(field: string): void {
-    this.showPasswords[field] = !this.showPasswords[field];
-    const passwordField = document.getElementById(field) as HTMLInputElement;
-    passwordField.type = this.showPasswords[field] ? 'text' : 'password';
-  }
-
-  passwordMatchValidator(formGroup: FormGroup): any {
-    const newPassword = formGroup.get('newPassword')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
-    return newPassword === confirmPassword ? null : { passwordsDontMatch: true };
   }
 
   toggleEdit(): void {

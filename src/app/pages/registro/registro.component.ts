@@ -2,14 +2,14 @@ import {ChangeDetectorRef, Component} from '@angular/core';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { AuthService } from '@core/services/auth.service';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {MessageComponent} from '../../shared/message/message.component';
 import { FormUtilsService } from '../../shared/services/form-utils.service';
 
 @Component({
   selector: 'app-registro',
-  imports: [NavbarComponent, FormsModule, ReactiveFormsModule, NgIf, MessageComponent],
+  imports: [NavbarComponent, FormsModule, ReactiveFormsModule, NgIf, MessageComponent, NgClass],
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css',
 })
@@ -35,7 +35,7 @@ export class RegistroComponent {
         ],
         confirmPassword: ['', Validators.required],
       }, {
-        validators: this.passwordMatchValidator,
+        validators: formUtils.passwordMatchValidator('password'),
       });
   }
 
@@ -83,11 +83,5 @@ export class RegistroComponent {
         this.cdr.detectChanges();
       },
     });
-  }
-
-  passwordMatchValidator(formGroup: FormGroup) {
-    const password = formGroup.get('password')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { mismatch: true };
   }
 }

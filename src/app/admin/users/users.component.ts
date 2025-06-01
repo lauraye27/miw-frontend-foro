@@ -1,14 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {NgForOf, NgIf} from '@angular/common';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {AuthService} from '@core/services/auth.service';
 import {NavbarComponent} from '../../navbar/navbar.component';
 import {User} from '@core/models/user.model';
-import {Role} from '@core/models/role.model';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MessageComponent} from '../../shared/message/message.component';
 import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
+import {FormUtilsService} from '../../shared/services/form-utils.service';
 
 @Component({
   selector: 'app-users',
@@ -17,30 +17,42 @@ import {Router} from '@angular/router';
     NavbarComponent,
     FormsModule,
     NgIf,
-    MessageComponent
+    MessageComponent,
+    ReactiveFormsModule,
+    NgClass
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
 export class UsersComponent implements OnInit {
   users: User[] = [];
+  userForm: FormGroup;
 
   errorMessage: string | null = null;
   successMessage: string | null = null;
-
-  newUser: Partial<User> = {
-    firstName: '',
-    lastName: '',
-    userName: '',
-    phone: '',
-    email: '',
-    password: '',
-    role: Role.MEMBER
-  };
-
   showForm: boolean = false;
 
-  constructor(private router: Router, public auth: AuthService, protected dialog: MatDialog) {}
+  constructor(private router: Router, public auth: AuthService, private fb: FormBuilder,
+              public formUtils: FormUtilsService, private cdr: ChangeDetectorRef, protected dialog: MatDialog) {
+    this.userForm = this.fb.group(
+      {
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        userName: ['', Validators.required],
+        phone: [''],
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+        ],
+        ],
+        confirmPassword: ['', Validators.required],
+        role: ['']
+      }, {
+        validators: formUtils.passwordMatchValidator('password'),
+      });
+  }
 
   ngOnInit() {
     this.loadUsers();
@@ -54,39 +66,55 @@ export class UsersComponent implements OnInit {
   }
 
   createUser(): void {
-    if (!this.validateUser()) {
+    this.errorMessage = null;
+    this.successMessage = null;
+
+    this.cdr.detectChanges();
+
+    if (this.userForm.invalid) {
+      const passwordControl = this.userForm.get('password');
+      if (passwordControl?.errors?.['pattern']) {
+        this.errorMessage = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)';
+        return;
+      } else if (passwordControl?.errors?.['minlength']) {
+        this.errorMessage = 'Password must be at least 8 characters long';
+        return;
+      }
+
+      this.errorMessage = 'Please check the fields and try again';
       return;
     }
 
-    this.auth.createUser(this.newUser).subscribe({
+    const newUser = {
+      firstName: this.userForm.value.firstName,
+      lastName: this.userForm.value.lastName,
+      userName: this.userForm.value.userName,
+      phone: this.userForm.value.phone,
+      email: this.userForm.value.email,
+      password: this.userForm.value.password,
+      role: this.userForm.value.role
+    };
+
+    this.auth.createUser(newUser).subscribe({
       next: (createdUser) => {
         this.successMessage = `User ${createdUser.userName} created successfully`;
-        this.resetForm();
+        this.userForm.reset();
+        this.cdr.detectChanges();
         this.showForm = false;
         this.loadUsers();
       },
       error: (err) => {
         console.error('Error creating user:', err);
-        this.errorMessage = 'Error creating user';
+        this.errorMessage = err;
+        this.cdr.detectChanges();
       }
     });
   }
 
-  validateUser(): boolean {
-    return !!this.newUser.firstName && !!this.newUser.lastName && !!this.newUser.userName &&
-      !!this.newUser.email && !!this.newUser.password;
-  }
-
   private resetForm(): void {
-    this.newUser = {
-      firstName: '',
-      lastName: '',
-      userName: '',
-      phone: '',
-      email: '',
-      password: '',
-      role: Role.MEMBER
-    };
+    this.userForm.reset({
+      role: 'MEMBER'
+    });
   }
 
   loadUsers() {

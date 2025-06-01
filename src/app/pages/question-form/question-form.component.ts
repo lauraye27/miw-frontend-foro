@@ -123,7 +123,7 @@ export class QuestionFormComponent implements OnInit {
       this.questionService.updateQuestion(this.questionId, this.question).subscribe({
         next: () => {
           this.successMessage = 'Question updated successfully';
-          this.router.navigate(['/question', this.questionId]).then();
+          this.router.navigate(['/my-questions']).then();
         },
         error: (error) => {
           console.error('Error updating question:', error);
@@ -132,9 +132,9 @@ export class QuestionFormComponent implements OnInit {
       });
     } else {
       this.questionService.createQuestion(this.question).subscribe({
-        next: (createdQuestion) => {
+        next: () => {
           this.successMessage = 'Question created successfully';
-          this.router.navigate(['/question', createdQuestion.id]).then();
+          this.router.navigate(['/questions']).then();
         },
         error: (error) => {
           console.error('Error creating question:', error);
