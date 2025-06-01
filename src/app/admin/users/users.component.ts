@@ -48,7 +48,7 @@ export class UsersComponent implements OnInit {
         ],
         ],
         confirmPassword: ['', Validators.required],
-        role: ['']
+        role: ['MEMBER']
       }, {
         validators: formUtils.passwordMatchValidator('password'),
       });
