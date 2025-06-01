@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '@core/services/auth.service';
 import {Router} from '@angular/router';
-import {NavbarComponent} from '../../navbar/navbar.component';
 import {NgClass, NgIf} from '@angular/common';
 import {filter, take} from 'rxjs';
 import {User} from '@core/models/user.model';
@@ -15,7 +14,6 @@ import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/conf
   selector: 'app-profile',
   imports: [
     ReactiveFormsModule,
-    NavbarComponent,
     NgIf,
     NgClass,
     MessageComponent

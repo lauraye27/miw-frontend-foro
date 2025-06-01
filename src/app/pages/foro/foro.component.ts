@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import { NavbarComponent } from '../../navbar/navbar.component';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
 import {QuestionService} from '@core/services/question.service';
@@ -14,7 +13,7 @@ import {MessageComponent} from '../../shared/message/message.component';
 @Component({
   selector: 'app-foro',
   standalone: true,
-  imports: [NavbarComponent, NgForOf, RouterLink, DatePipe, PaginationComponent, TruncatePipe, NgIf, MessageComponent],
+  imports: [NgForOf, RouterLink, DatePipe, PaginationComponent, TruncatePipe, NgIf, MessageComponent],
   templateUrl: './foro.component.html',
   styleUrl: './foro.component.css',
 })

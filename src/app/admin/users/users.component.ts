@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {AuthService} from '@core/services/auth.service';
-import {NavbarComponent} from '../../navbar/navbar.component';
 import {User} from '@core/models/user.model';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MessageComponent} from '../../shared/message/message.component';
@@ -15,7 +14,6 @@ import {PaginationComponent} from '../../shared/pagination/pagination.component'
   selector: 'app-users',
   imports: [
     NgForOf,
-    NavbarComponent,
     FormsModule,
     NgIf,
     MessageComponent,

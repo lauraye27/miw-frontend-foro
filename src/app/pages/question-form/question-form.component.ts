@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {NavbarComponent} from '../../navbar/navbar.component';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {QuestionService} from '@core/services/question.service';
@@ -11,7 +10,6 @@ import {QuestionForm} from '@core/models/question.model';
 @Component({
   selector: 'app-question-form',
   imports: [
-    NavbarComponent,
     FormsModule,
     MessageComponent,
     NgForOf,

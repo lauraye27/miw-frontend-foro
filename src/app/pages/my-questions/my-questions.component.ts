@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
-import {NavbarComponent} from "../../navbar/navbar.component";
 import {Router, RouterLink} from '@angular/router';
 import {QuestionService} from '@core/services/question.service';
 import {AuthService} from '@core/services/auth.service';
@@ -12,7 +11,7 @@ import {Question} from '@core/models/question.model';
 
 @Component({
   selector: 'app-my-questions',
-  imports: [DatePipe, NavbarComponent, NgForOf, RouterLink, NgIf, MessageComponent, PaginationComponent],
+  imports: [DatePipe, NgForOf, RouterLink, NgIf, MessageComponent, PaginationComponent],
   templateUrl: './my-questions.component.html',
   styleUrl: './my-questions.component.css'
 })

@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import {NavbarComponent} from '../navbar/navbar.component';
-import {NgIf} from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '@core/services/auth.service';
 import {MessageComponent} from '../shared/message/message.component';
@@ -8,7 +6,6 @@ import {MessageComponent} from '../shared/message/message.component';
 @Component({
   selector: 'app-forgot-password',
   imports: [
-    NavbarComponent,
     FormsModule,
     ReactiveFormsModule,
     MessageComponent

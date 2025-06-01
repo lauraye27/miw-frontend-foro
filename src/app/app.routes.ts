@@ -7,7 +7,6 @@ import {ProfileComponent} from './pages/profile/profile.component';
 import {ResetPasswordComponent} from './reset-password/reset-password.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 import {QuestionFormComponent} from './pages/question-form/question-form.component';
-import {NotificationComponent} from './notification/notification.component';
 import {MyQuestionsComponent} from './pages/my-questions/my-questions.component';
 import {QuestionComponent} from './pages/question/question.component';
 import {UsersComponent} from './admin/users/users.component';
@@ -25,7 +24,6 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'notification', component: NotificationComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },
   { path: 'question-form', component: QuestionFormComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },
   { path: 'question-form/:id', component: QuestionFormComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },
   { path: 'my-questions', component: MyQuestionsComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },

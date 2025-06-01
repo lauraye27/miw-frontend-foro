@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavbarComponent } from '../../navbar/navbar.component';
 import { AuthService } from '@core/services/auth.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
@@ -10,7 +9,7 @@ import {FormUtilsService} from '../../shared/services/form-utils.service';
 
 @Component({
   selector: 'app-login',
-  imports: [NavbarComponent, ReactiveFormsModule, FormsModule, MessageComponent, NgIf, NgClass],
+  imports: [ReactiveFormsModule, FormsModule, MessageComponent, NgIf, NgClass],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

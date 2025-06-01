@@ -1,5 +1,4 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-import { NavbarComponent } from '../../navbar/navbar.component';
 import { AuthService } from '@core/services/auth.service';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgClass, NgIf} from '@angular/common';
@@ -9,7 +8,7 @@ import { FormUtilsService } from '../../shared/services/form-utils.service';
 
 @Component({
   selector: 'app-registro',
-  imports: [NavbarComponent, FormsModule, ReactiveFormsModule, NgIf, MessageComponent, NgClass],
+  imports: [FormsModule, ReactiveFormsModule, NgIf, MessageComponent, NgClass],
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css',
 })

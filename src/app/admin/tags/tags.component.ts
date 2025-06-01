@@ -3,7 +3,6 @@ import {TagService} from '@core/services/tag.service';
 import {NgForOf, NgIf} from '@angular/common';
 import {Tag} from '@core/models/tag.model';
 import {MessageComponent} from '../../shared/message/message.component';
-import {NavbarComponent} from '../../navbar/navbar.component';
 import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 
@@ -12,8 +11,7 @@ import {MatDialog} from '@angular/material/dialog';
   imports: [
     NgIf,
     NgForOf,
-    MessageComponent,
-    NavbarComponent
+    MessageComponent
   ],
   templateUrl: './tags.component.html',
   styleUrl: './tags.component.css'

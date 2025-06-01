@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {MessageComponent} from '../../shared/message/message.component';
-import {NavbarComponent} from '../../navbar/navbar.component';
 import {QuestionService} from '@core/services/question.service';
 import {Router} from '@angular/router';
 import {TagService} from '@core/services/tag.service';
@@ -12,7 +11,6 @@ import {Tag} from '@core/models/tag.model';
   selector: 'app-tag',
   imports: [
     MessageComponent,
-    NavbarComponent,
     NgForOf,
     FormsModule
   ],

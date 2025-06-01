@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgIf} from '@angular/common';
-import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
 import {MessageComponent} from '../shared/message/message.component';
+import {FormUtilsService} from '../shared/services/form-utils.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -17,45 +17,6 @@ import {MessageComponent} from '../shared/message/message.component';
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.css'
 })
-// export class ResetPasswordComponent {
-//   token: string = '';
-//   newPassword: string = '';
-//   confirmPassword: string = '';
-//   message: string = '';
-//   error: string = '';
-//
-//   constructor(
-//     private route: ActivatedRoute,
-//     private http: HttpClient
-//   ) {}
-//
-//   ngOnInit() {
-//     this.route.queryParams.subscribe(params => {
-//       this.token = params['token'];
-//     });
-//   }
-//
-//   onSubmit() {
-//     if (this.newPassword !== this.confirmPassword) {
-//       this.error = 'Passwords do not match';
-//       return;
-//     }
-//
-//     this.http.post('/user/reset-password', {
-//       token: this.token,
-//       newPassword: this.newPassword
-//     }).subscribe({
-//       next: () => {
-//         this.message = 'Password has been reset successfully. You can now login with your new password.';
-//         this.error = '';
-//       },
-//       error: (err) => {
-//         this.error = err.error || 'An error occurred.';
-//         this.message = '';
-//       }
-//     });
-//   }
-// }
 
 export class ResetPasswordComponent implements OnInit {
   resetForm: FormGroup;
@@ -65,28 +26,20 @@ export class ResetPasswordComponent implements OnInit {
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthService
-  ) {
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router, private authService: AuthService,
+              public formUtils: FormUtilsService) {
     this.resetForm = this.fb.group({
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      newPassword: ['', [Validators.required, Validators.minLength(8),
+        Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),]],
       confirmPassword: ['', Validators.required]
-    }, { validator: this.passwordMatchValidator });
+    }, { validator: formUtils.passwordMatchValidator('newPassword') });
   }
 
   ngOnInit() {
     this.token = this.route.snapshot.queryParamMap.get('token') || '';
     if (!this.token) {
-      this.errorMessage = 'Invalid link';
+      this.router.navigate(['/questions']);
     }
-  }
-
-  passwordMatchValidator(form: FormGroup) {
-    return form.get('newPassword')?.value === form.get('confirmPassword')?.value
-      ? null : { mismatch: true };
   }
 
   onSubmit() {
@@ -114,6 +67,6 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   goToHome() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/questions']);
   }
 }
