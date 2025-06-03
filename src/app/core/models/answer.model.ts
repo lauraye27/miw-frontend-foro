@@ -5,3 +5,9 @@ export interface Answer {
   questionId: number;
   creationDate: Date;
 }
+
+export interface AnswerForm {
+  content: string;
+  author: string;
+  questionId: number;
+}
