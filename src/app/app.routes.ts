@@ -16,6 +16,8 @@ import {TagsComponent} from './admin/tags/tags.component';
 import {Role} from '@core/models/role.model';
 import {RoleGuardService} from '@core/services/role-guard.service';
 import {NotFoundComponent} from './shared/not-found/not-found.component';
+import {AnswerFormComponent} from './pages/answer-form/answer-form.component';
+import {MyAnswersComponent} from './pages/my-answers/my-answers.component';
 
 export const routes: Routes = [
   { path: 'questions', component: foroComponent },
@@ -31,6 +33,9 @@ export const routes: Routes = [
   { path: 'question', component: QuestionComponent },
   { path: 'question/:id', component: QuestionComponent },
   { path: 'tags', component: TagComponent },
+  { path: 'answer-form', component: AnswerFormComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },
+  { path: 'answer-form/:id', component: AnswerFormComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },
+  { path: 'my-answers', component: MyAnswersComponent, canActivate: [RoleGuardService], data: { roles: [Role.MEMBER, Role.ADMIN] } },
   {
     path: 'admin',
     canActivate: [RoleGuardService],

@@ -18,6 +18,7 @@ export class Endpoints {
   static readonly QUESTION_MY = `${Endpoints.QUESTIONS}/myQuestions`;
 
   static readonly ANSWERS = `${environment.REST_API}/answers`;
+  static readonly ANSWER_MY = `${Endpoints.ANSWERS}/myAnswers`;
 
   static readonly TAGS = `${environment.REST_API}/tags`;
 }
