@@ -134,7 +134,7 @@ export class AuthService {
       return throwError(() => new Error('User ID not found'));
     }
 
-    return this.httpService.post(Endpoints.FORGOT_PASSWORD, { userId, currentPassword }).pipe(
+    return this.httpService.post(Endpoints.VERIFY_PASSWORD_ENDPOINT, { userId, currentPassword }).pipe(
       map(response => response.isValid),
       catchError(error => {
         console.error('Error verifying password:', error);

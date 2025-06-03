@@ -5,6 +5,7 @@ export class Endpoints {
   static readonly USERS = `${environment.REST_API}/users`;
   static readonly LOGIN = `${Endpoints.USERS}/login`;
   static readonly REGISTER = `${Endpoints.USERS}/register`;
+  static readonly VERIFY_PASSWORD_ENDPOINT = `${Endpoints.USERS}/verifyPassword`;
 
   static readonly FORGOT_PASSWORD = `${environment.REST_API}/account/forgot-password`;
   static readonly RESET_PASSWORD = `${environment.REST_API}/account/reset-password`;
@@ -17,6 +18,7 @@ export class Endpoints {
   static readonly QUESTION_MY = `${Endpoints.QUESTIONS}/myQuestions`;
 
   static readonly ANSWERS = `${environment.REST_API}/answers`;
+  static readonly ANSWER_MY = `${Endpoints.ANSWERS}/myAnswers`;
 
   static readonly TAGS = `${environment.REST_API}/tags`;
 }

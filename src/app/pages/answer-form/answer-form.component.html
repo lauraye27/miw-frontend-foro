@@ -1,0 +1,30 @@
+<app-navbar></app-navbar>
+<app-message
+  [successMessage]="successMessage"
+  [errorMessage]="errorMessage"
+></app-message>
+
+<div class="container mt-5">
+  <h2 class="mb-4">Edit your Answer</h2>
+
+  <form (ngSubmit)="submitAnswer()" #answerForm="ngForm">
+
+    <div class="mb-3">
+      <label for="content" class="form-label">Content</label>
+      <input type="text" id="content" class="form-control form-control-lg" placeholder="Enter a short and descriptive content..."
+             [(ngModel)]="answer.content" name="content" required>
+    </div>
+
+<!--    <div class="mb-3">-->
+<!--      <label for="author" class="form-label">Author</label>-->
+<!--      <textarea id="author" rows="8" class="form-control" placeholder="Author"-->
+<!--                [(ngModel)]="answer.author" name="author" required-->
+<!--      ></textarea>-->
+<!--    </div>-->
+
+    <button type="submit" class="btn btn-primary" [disabled]="!answerForm.valid">
+      Submit Answer
+    </button>
+
+  </form>
+</div>
