@@ -40,14 +40,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.firstName = user.firstName;
         this.lastName = user.lastName;
 
-        this.notificationService.getStoredNotifications();
         this.notificationService.connect(user.id)
-
-        this.notificationSub = this.notificationService.notifications$.subscribe(notifications => {
-          console.log('Notifications received:', notifications);
-          this.notifications = notifications;
-          this.unreadNotifications = notifications.filter(n => !n.read).length;
-        });
+        this.loadNotifications();
       }
     });
   }
@@ -66,6 +60,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.isAuthenticated) {
       this.notificationService.getStoredNotifications();
     }
+    this.notificationSub = this.notificationService.notifications$.subscribe(notifications => {
+      this.notifications = notifications.filter(n => !n.read);
+      this.unreadNotifications = notifications.filter(n => !n.read).length;
+    });
   }
 
   getNotificationIcon(type: string): string {

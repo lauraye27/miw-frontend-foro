@@ -103,6 +103,11 @@
   white-space: normal;
 }
 
+.notification-dropdown .dropdown-item:hover {
+  background-color: #dfebf7;
+  color: #000;
+}
+
 .user-section .navbar-nav {
   display: flex;
   flex-direction: row;

@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {NavbarComponent} from '../../navbar/navbar.component';
 import {MessageComponent} from '../../shared/message/message.component';
 import {FormsModule} from '@angular/forms';
-import {NgForOf, NgIf} from '@angular/common';
 import {Answer, AnswerForm} from '@core/models/answer.model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AnswerService} from '@core/services/answer.service';
@@ -10,11 +8,8 @@ import {AnswerService} from '@core/services/answer.service';
 @Component({
   selector: 'app-answer-form',
   imports: [
-    NavbarComponent,
     FormsModule,
-    MessageComponent,
-    NgForOf,
-    NgIf
+    MessageComponent
   ],
   templateUrl: './answer-form.component.html',
   styleUrl: './answer-form.component.css'
@@ -27,7 +22,6 @@ export class AnswerFormComponent implements OnInit {
     questionId: 0,
   };
 
-  isEditMode = false;
   answerId: number | null = null;
   questionId: number | null = null;
 
@@ -43,7 +37,6 @@ export class AnswerFormComponent implements OnInit {
     const id: string = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.answerId = Number(id);
-      this.isEditMode = true;
       this.loadAnswer(this.answerId);
     }
   }
@@ -65,11 +58,11 @@ export class AnswerFormComponent implements OnInit {
   }
 
   submitAnswer(): void {
-    if (this.isEditMode && this.answerId) {
+    if (this.answerId) {
       this.answerService.updateAnswer(this.answerId, this.answer).subscribe({
         next: (): void => {
           this.successMessage = 'Successfully updated answer';
-          this.router.navigate(['/answers', this.answerId]).then();
+          this.router.navigate(['/my-answers']).then();
         },
         error: (error: any): void => {
           console.error('Error updating answer:', error);

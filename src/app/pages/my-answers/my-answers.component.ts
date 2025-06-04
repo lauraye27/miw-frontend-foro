@@ -1,36 +1,32 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AnswerService} from '@core/services/answer.service';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import {AuthService} from '@core/services/auth.service';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import {MessageComponent} from '../../shared/message/message.component';
-import {NavbarComponent} from '../../navbar/navbar.component';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
-import {QuestionsPaginationComponent} from '../../shared/questions-pagination/questions-pagination.component';
+import {PaginationComponent} from '../../shared/pagination/pagination.component';
+import {Answer} from '@core/models/answer.model';
 
 @Component({
   selector: 'app-my-answers',
   imports: [
     MessageComponent,
-    NavbarComponent,
     DatePipe,
     NgForOf,
     NgIf,
-    QuestionsPaginationComponent,
-    RouterLink
+    PaginationComponent
   ],
   templateUrl: './my-answers.component.html',
   styleUrl: './my-answers.component.css'
 })
 export class MyAnswersComponent implements OnInit {
-  answers: any[] = [];
+  answers: Answer[] = [];
   currentPage: number = 0;
   totalPages: number = 0;
 
   errorMessage: string | null = null;
-
-  @ViewChild('deleteConfirmationTemplate') deleteConfirmationTemplate!: TemplateRef<any>;
 
   constructor(private router: Router, private answerService: AnswerService, private authService: AuthService,
               protected dialog: MatDialog) {}
@@ -46,8 +42,18 @@ export class MyAnswersComponent implements OnInit {
         .subscribe(response => {
           this.answers = response.content;
           this.currentPage = response.page.number;
-          this.totalPages = response.totalPages;
+          this.totalPages = response.page.totalPages;
         });
+    }
+  }
+
+  navigateToAnswer(questionId: number, answerId?: number) {
+    if (answerId) {
+      this.router.navigate(['/question', questionId], {
+        queryParams: { answer: answerId }
+      });
+    } else {
+      this.router.navigate(['/question', questionId]);
     }
   }
 
@@ -57,40 +63,39 @@ export class MyAnswersComponent implements OnInit {
     }
   }
 
-  onAskClick(): void {
-    console.log('onAskClick');
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/answer-form']).then();
-    }
-  }
-
   onEditAnswer(answerId: number, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.router.navigate(['/answer-form', answerId]).then();
   }
 
-  onDeleteAnswer(answerId: number): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '400px',
-      data: {
-        title: 'Delete Answer',
-        message: 'Are you sure you want to delete this answer?'
-      }
-    });
+  onDeleteAnswer(answer: Answer, event: MouseEvent): void {
+    event.stopPropagation();
 
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.answerService.deleteAnswer(answerId).subscribe({
-          next: () => {
-            this.answers = this.answers.filter(q => q.id !== answerId);
-            this.router.navigate(['/my-answers']).then();
-          },
-          error: err => {
-            this.errorMessage = 'An error occurred while deleting the answer';
-          }
-        });
-      }
+    this.router.navigate(['/question', answer.questionId], {
+      queryParams: { answer: answer.id }
+    }).then(() => {
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        width: '400px',
+        data: {
+          title: 'Delete Answer',
+          message: 'Are you sure you want to delete this answer?'
+        }
+      });
+
+      dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.answerService.deleteAnswer(answer.id).subscribe({
+            next: () => {
+              this.answers = this.answers.filter(a => a.id !== answer.id);
+              this.router.navigate(['/my-answers']).then();
+            },
+            error: err => {
+              this.errorMessage = 'An error occurred while deleting the answer';
+            }
+          });
+        }
+      });
     });
   }
 }
