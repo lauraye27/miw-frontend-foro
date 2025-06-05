@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {NgIf} from '@angular/common';
 
 @Component({
@@ -9,9 +9,20 @@ import {NgIf} from '@angular/common';
   templateUrl: './message.component.html',
   styleUrl: './message.component.css'
 })
-export class MessageComponent {
+export class MessageComponent implements OnChanges {
   @Input() successMessage: string | null = null;
   @Input() errorMessage: string | null = null;
+  showMessage = false;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['successMessage'] || changes['errorMessage']) {
+      this.showMessage = true;
+
+      setTimeout(() => {
+        this.showMessage = false;
+      }, 5000);
+    }
+  }
 
   clearMessages(): void {
     this.successMessage = null;

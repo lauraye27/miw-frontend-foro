@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -16,13 +16,16 @@ import {FormUtilsService} from '../../shared/services/form-utils.service';
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  successMessage: string | null = null;
+
+  submitted = false;
   errorMessage: string | null = null;
 
   constructor(private router: Router, private authService: AuthService, private readonly dialog: MatDialog,
-              public formUtils: FormUtilsService) {}
+              public formUtils: FormUtilsService, private cdr: ChangeDetectorRef) {}
 
   login() {
+    this.cdr.detectChanges();
+    this.submitted = true;
     this.errorMessage = null;
 
     if (!this.email || !this.password) {
@@ -44,7 +47,6 @@ export class LoginComponent {
         } else {
           this.errorMessage = 'An unexpected error occurred. Please try again';
         }
-        this.successMessage = null;
       },
     });
   }

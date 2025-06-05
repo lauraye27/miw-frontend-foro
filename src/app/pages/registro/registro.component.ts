@@ -14,6 +14,8 @@ import { FormUtilsService } from '../../shared/services/form-utils.service';
 })
 export class RegistroComponent {
   registerForm: FormGroup;
+
+  submitted = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
@@ -39,19 +41,12 @@ export class RegistroComponent {
   }
 
   register() {
-    this.errorMessage = null;
     this.cdr.detectChanges();
+    this.submitted = true;
+    this.errorMessage = null;
+    this.successMessage = null;
 
     if (this.registerForm.invalid) {
-      const passwordControl = this.registerForm.get('password');
-      if (passwordControl?.errors?.['pattern']) {
-        this.errorMessage = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)';
-        return;
-      } else if (passwordControl?.errors?.['minlength']) {
-        this.errorMessage = 'Password must be at least 8 characters long';
-        return;
-      }
-
       this.errorMessage = 'Please check the fields and try again';
       return;
     }
@@ -76,9 +71,8 @@ export class RegistroComponent {
           this.router.navigate(['/login']).then();
         }, 2000);
       },
-      error: (err) => {
-        console.error(err);
-        this.errorMessage = err;
+      error: (error) => {
+        this.errorMessage = error.error.message;
         this.cdr.detectChanges();
       },
     });
