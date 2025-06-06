@@ -1,0 +1,122 @@
+<app-message
+  [errorMessage]="errorMessage"
+></app-message>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label for="firstName" class="form-label">First Name *</label>
+    <input type="text" id="firstName" class="form-control" placeholder="First name" formControlName="firstName" required
+           [class.is-invalid]="(formSubmitted && form.get('firstName')?.invalid) || (form.get('firstName')?.invalid &&
+                                 (formUtils.isTouched(form,'firstName') || form.get('firstName')?.dirty))"/>
+    <small class="text-danger" *ngIf="(formSubmitted && form.get('firstName')?.errors?.['required']) ||  (form.get('firstName')?.errors?.['required'] &&
+                                          (formUtils.isTouched(form,'firstName') || form.get('firstName')?.dirty))">
+      First name is required
+    </small>
+  </div>
+
+  <div class="mb-3">
+    <label for="lastName" class="form-label">Last Name *</label>
+    <input type="text" id="lastName" class="form-control" placeholder="Last name" formControlName="lastName" required
+           [class.is-invalid]="(formSubmitted && form.get('lastName')?.invalid) || (form.get('lastName')?.invalid &&
+                                 (formUtils.isTouched(form,'lastName') || form.get('lastName')?.dirty))"/>
+    <small class="text-danger" *ngIf="(formSubmitted && form.get('lastName')?.errors?.['required']) ||  (form.get('lastName')?.errors?.['required'] &&
+                                          (formUtils.isTouched(form,'lastName') || form.get('lastName')?.dirty))">
+      Last name is required
+    </small>
+  </div>
+
+  <div class="mb-3">
+    <label for="userName" class="form-label">Username *</label>
+    <input type="text" id="userName" class="form-control" placeholder="Username" formControlName="userName" required
+           [class.is-invalid]="(formSubmitted && form.get('userName')?.invalid) || (form.get('userName')?.invalid &&
+                                 (formUtils.isTouched(form,'userName') || form.get('userName')?.dirty))"/>
+    <small class="text-danger" *ngIf="(formSubmitted && form.get('userName')?.errors?.['required']) || (form.get('userName')?.errors?.['required'] &&
+                                          (formUtils.isTouched(form,'userName') || form.get('userName')?.dirty))">
+      Username is required
+    </small>
+    <small class="text-danger"
+           *ngIf="errorMessage?.includes('username') && (formUtils.isTouched(form,'userName') || form.get('userName')?.dirty)">
+      The username is already taken
+    </small>
+  </div>
+
+  <div class="mb-3">
+    <label for="phone" class="form-label">Phone</label>
+    <input type="text" id="phone" class="form-control" placeholder="Phone number" formControlName="phone"/>
+  </div>
+
+  <div class="mb-3">
+    <label for="email" class="form-label">Email *</label>
+    <input type="email" id="email" class="form-control" placeholder="example@example.com" formControlName="email"
+           required
+           [class.is-invalid]="(formSubmitted && form.get('email')?.invalid) || (form.get('email')?.invalid &&
+                                 (formUtils.isTouched(form,'email') || form.get('email')?.dirty)) || errorMessage?.includes('email')"/>
+    <small class="text-danger" *ngIf="(formSubmitted && form.get('email')?.errors?.['required']) || (form.get('email')?.errors?.['required'] &&
+                                          (formUtils.isTouched(form,'email') || form.get('email')?.dirty))">
+      Email is required
+    </small>
+    <small class="text-danger" *ngIf="(formSubmitted && form.get('email')?.errors?.['email']) || (form.get('email')?.errors?.['email'] &&
+                                          (formUtils.isTouched(form,'email') || form.get('email')?.dirty))">
+      Invalid email format
+    </small>
+    <small class="text-danger" *ngIf="errorMessage?.includes('email')">
+      The email is already registered
+    </small>
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Password *</label>
+    <div class="input-group">
+      <input type="password" id="password" class="form-control" placeholder="8+ characters" formControlName="password"
+             required
+             [class.is-invalid]="(formSubmitted && form.get('password')?.invalid) || (form.get('password')?.invalid &&
+                                   (form.get('password')?.dirty || formUtils.isTouched(form,'password')))"/>
+      <button type="button" class="btn btn-outline-secondary input-group-text"
+              (click)="formUtils.togglePasswordVisibility('password')">
+        <i class="fa-solid" [ngClass]="formUtils.showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+      </button>
+    </div>
+    <small class="text-danger" *ngIf="(formSubmitted && form.get('password')?.errors?.['minlength']) || (form.get('password')?.errors?.['minlength'] &&
+                                          (formUtils.isTouched(form,'password') || form.get('password')?.dirty))">
+      Password must be at least 8 characters long
+    </small>
+    <small class="text-danger" *ngIf="(formSubmitted && form.get('password')?.errors?.['pattern']) || (form.get('password')?.errors?.['pattern'] &&
+                                          (formUtils.isTouched(form,'password') || form.get('password')?.dirty))">
+      Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (&#64;$!%*?&)
+    </small>
+  </div>
+
+  <div class="mb-3">
+    <label for="confirmPassword" class="form-label">Confirm password *</label>
+    <div class="input-group">
+      <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required
+             [class.is-invalid]="(formSubmitted && form.get('confirmPassword')?.invalid) || (form.get('confirmPassword')?.invalid &&
+                                   (formUtils.isTouched(form,'confirmPassword') || form.get('confirmPassword')?.dirty)) || form.errors?.['mismatch']"/>
+      <button type="button" class="btn btn-outline-secondary input-group-text"
+              (click)="formUtils.togglePasswordVisibility('confirmPassword')">
+        <i class="fa-solid" [ngClass]="formUtils.showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+      </button>
+    </div>
+    <small class="text-danger" *ngIf="(formSubmitted && form.get('confirmPassword')?.errors?.['required']) || (form.get('confirmPassword')?.errors?.['required'] &&
+                                          (formUtils.isTouched(form,'confirmPassword') || form.get('confirmPassword')?.dirty))">
+      Confirm your password
+    </small>
+    <small class="text-danger"
+           *ngIf="form.errors?.['mismatch'] && (formUtils.isTouched(form,'confirmPassword') || form.get('confirmPassword')?.dirty)">
+      Passwords do not match
+    </small>
+  </div>
+
+  <div *ngIf="options?.showRoleSelect" class="mb-3">
+    <label for="role" class="form-label">Role</label>
+    <select id="role" class="form-select" formControlName="role">
+      <option value="MEMBER">Member</option>
+      <option value="ADMIN">Admin</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">
+    {{ options?.submitButtonText || 'Submit' }}
+  </button>
+</form>
+

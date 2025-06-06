@@ -36,7 +36,7 @@ export class AuthService {
     );
   }
 
-  register(user: { firstName: string; lastName: string; userName: string; phone: string; email: string; password: string }): Observable<any> {
+  register(user: Partial<User>): Observable<User> {
     return this.httpService
       .post(Endpoints.REGISTER, user)
       .pipe(

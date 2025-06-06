@@ -23,9 +23,4 @@ export class MessageComponent implements OnChanges {
       }, 5000);
     }
   }
-
-  clearMessages(): void {
-    this.successMessage = null;
-    this.errorMessage = null;
-  }
 }
