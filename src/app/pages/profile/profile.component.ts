@@ -27,6 +27,7 @@ export class ProfileComponent  implements OnInit {
   isEditMode: boolean = false;
 
   showPasswordSection: boolean = false;
+  submitted = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
@@ -41,9 +42,8 @@ export class ProfileComponent  implements OnInit {
           email: ['', [Validators.required, Validators.email]],
           currentPassword: [''],
           newPassword: ['', [
-            Validators.minLength(6),
-            Validators.maxLength(12),
-            Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/),
+            Validators.minLength(8),
+            Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
           ]],
           confirmPassword: ['']
         }, {
@@ -95,8 +95,10 @@ export class ProfileComponent  implements OnInit {
       this.userProfileForm.get('newPassword')?.reset();
       this.userProfileForm.get('confirmPassword')?.reset();
 
+      this.userProfileForm.get('currentPassword')?.setErrors(null);
       this.userProfileForm.get('newPassword')?.setErrors(null);
       this.userProfileForm.get('confirmPassword')?.setErrors(null);
+      this.userProfileForm.setErrors(null);
     }
   }
 
@@ -120,69 +122,11 @@ export class ProfileComponent  implements OnInit {
     this.showPasswordSection = false;
   }
 
-  private validateForm(): { isValid: boolean, data: any, errorMessage: string } {
-    if (this.userProfileForm.invalid) {
-      return {
-        isValid: false,
-        data: null,
-        errorMessage: 'Please check the fields'
-      };
-    }
-    const { firstName, lastName, userName, phone, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
-    const updatedUser: any = { firstName, lastName, userName, phone, email };
-    if (this.showPasswordSection) {
-      if (!currentPassword || !newPassword || newPassword !== confirmPassword) {
-        return {
-          isValid: false,
-          data: null,
-          errorMessage: 'Passwords do not match or current password is missing'
-        };
-      }
-    }
-    return {
-      isValid: true,
-      data: { updatedUser, currentPassword, newPassword },
-      errorMessage: ''
-    };
-  }
-
-  private updateUserWithPasswordVerification(updatedUser: any, currentPassword: string, newPassword: string): void {
-    this.authService.verifyCurrentPassword(currentPassword).subscribe(
-      isValid => {
-        if (isValid) {
-          updatedUser['password'] = newPassword;
-          this.updateUser(updatedUser);
-        } else {
-          this.errorMessage = 'Current password is incorrect';
-        }
-      },
-      error => {
-        this.errorMessage = 'Error verifying current password';
-      }
-    );
-  }
-
-  private updateUser(updatedUser: any): void {
-    this.authService.updateUser(updatedUser).subscribe({
-      next: () => {
-        this.successMessage = 'Changes saved successfully';
-        this.errorMessage = null;
-        this.toggleEdit();
-        this.loadUserDetails();
-
-        setTimeout(() => {
-          this.successMessage = null;
-        }, 2000);
-      },
-      error: error => {
-        console.error('Error en la actualización:', error);
-        this.errorMessage = error.status === 400 ? 'Validation failed'
-          : error?.status === 403 ? 'Permission denied' : 'Error updating user';
-      }
-    });
-  }
-
   saveChanges(): void {
+    this.submitted = true;
+    this.errorMessage = null;
+    this.successMessage = null;
+
     const validationResult = this.validateForm();
     if (!validationResult.isValid) {
       this.errorMessage = validationResult.errorMessage;
@@ -236,6 +180,67 @@ export class ProfileComponent  implements OnInit {
         } else {
           this.errorMessage = 'An unexpected error occurred. Please try again';
         }
+      }
+    });
+  }
+
+  private validateForm(): { isValid: boolean, data: any, errorMessage: string } {
+    if (this.userProfileForm.invalid) {
+      return {
+        isValid: false,
+        data: null,
+        errorMessage: 'Please check the fields'
+      };
+    }
+    const { firstName, lastName, userName, phone, email, newPassword, confirmPassword, currentPassword } = this.userProfileForm.value;
+    const updatedUser: any = { firstName, lastName, userName, phone, email };
+    if (this.showPasswordSection) {
+      if (!currentPassword || !newPassword || newPassword !== confirmPassword) {
+        return {
+          isValid: false,
+          data: null,
+          errorMessage: 'Passwords do not match or current password is missing'
+        };
+      }
+    }
+    return {
+      isValid: true,
+      data: { updatedUser, currentPassword, newPassword },
+      errorMessage: ''
+    };
+  }
+
+  private updateUserWithPasswordVerification(updatedUser: any, currentPassword: string, newPassword: string): void {
+    this.authService.verifyCurrentPassword(currentPassword).subscribe(
+      isValid => {
+        if (isValid) {
+          updatedUser['password'] = newPassword;
+          this.updateUser(updatedUser);
+        } else {
+          this.errorMessage = 'Current password is incorrect';
+        }
+      },
+      error => {
+        this.errorMessage = 'Error verifying current password';
+      }
+    );
+  }
+
+  private updateUser(updatedUser: any): void {
+    this.authService.updateUser(updatedUser).subscribe({
+      next: () => {
+        this.successMessage = 'Changes saved successfully';
+        this.errorMessage = null;
+        this.submitted = false;
+        this.toggleEdit();
+        this.loadUserDetails();
+
+        setTimeout(() => {
+          this.successMessage = null;
+        }, 2000);
+      },
+      error: error => {
+        this.errorMessage = error.error.message;
       }
     });
   }

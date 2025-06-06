@@ -17,7 +17,7 @@ export class FormUtilsService {
     return (formGroup: AbstractControl): ValidationErrors | null => {
       const password = formGroup.get(passwordField)?.value;
       const confirmPassword = formGroup.get('confirmPassword')?.value;
-      return password === confirmPassword ? null : { passwordsDontMatch: true };
+      return password === confirmPassword ? null : { mismatch: true };
     };
   }
 

@@ -1,7 +1,11 @@
-<div *ngIf="successMessage" class="floating-alert alert-success">
+<div *ngIf="successMessage && showMessage"
+     class="floating-alert alert-success show"
+     [@slideAnimation]>
   {{ successMessage }}
 </div>
 
-<div *ngIf="errorMessage" class="floating-alert alert-danger">
+<div *ngIf="errorMessage && showMessage"
+     class="floating-alert alert-danger show"
+     [@slideAnimation]>
   {{ errorMessage }}
 </div>
