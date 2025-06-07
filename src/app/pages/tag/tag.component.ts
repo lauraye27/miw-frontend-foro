@@ -26,7 +26,6 @@ export class TagComponent implements OnInit {
 
   constructor(
     private tagService: TagService,
-    private questionService: QuestionService,
     private router: Router
   ) {}
 

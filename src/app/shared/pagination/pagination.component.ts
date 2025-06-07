@@ -13,7 +13,7 @@ import {NgForOf, NgIf} from '@angular/common';
 export class PaginationComponent implements OnChanges {
   @Input() currentPage: number = 0;
   @Input() totalPages: number = 0;
-  @Input() maxVisiblePages: number = 5;
+  @Input() maxVisiblePages: number = 3;
 
   @Output() pageChange = new EventEmitter<number>();
 

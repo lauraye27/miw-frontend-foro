@@ -16,7 +16,7 @@
       <div class="card-text mb-4" [innerHTML]="question?.description"></div>
 
       <div class="d-flex gap-2">
-        <span *ngFor="let tag of question?.tags" class="badge bg-secondary">{{ tag }}</span>
+        <span *ngFor="let tag of question?.tags" class="badge custom-tag me-1">{{ tag }}</span>
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@
             required
           ></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" [disabled]="!answerForm.valid">
+        <button type="submit" class="auth-btn-primary" [disabled]="!answerForm.valid">
           Post Answer
         </button>
       </form>

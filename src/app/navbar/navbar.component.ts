@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -29,6 +29,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   unreadNotifications = 0;
   notifications: Notification[] = [];
   notificationSub: Subscription;
+
+  isMenuOpen = false;
 
   constructor(protected authService: AuthService, private readonly router: Router,
               private readonly notificationService: NotificationService) { }
@@ -105,5 +107,29 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    const navbarCollapse = document.getElementById('navbarCollapse');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+
+    if (this.isMenuOpen &&
+      !navbarCollapse?.contains(event.target as Node) &&
+      !navbarToggler?.contains(event.target as Node)) {
+      this.closeMenu();
+    }
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu() {
+    this.isMenuOpen = false;
+    const collapse = document.getElementById('navbarCollapse');
+    if (collapse?.classList.contains('show')) {
+      collapse.classList.remove('show');
+    }
   }
 }
