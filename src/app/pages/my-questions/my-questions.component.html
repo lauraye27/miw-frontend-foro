@@ -5,7 +5,7 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h3>My Questions</h3>
-    <button class="btn btn-primary" (click)="onAskClick()">
+    <button class="auth-btn-primary" (click)="onAskClick()">
       Ask Question
     </button>
   </div>
@@ -38,6 +38,6 @@
     [currentPage]="currentPage"
     [totalPages]="totalPages"
     (pageChange)="changePage($event)"
-    [maxVisiblePages]="5">
+    [maxVisiblePages]="3">
   </app-pagination>
 </div>

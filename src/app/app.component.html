@@ -1,10 +1,14 @@
-<app-navbar></app-navbar>
+<div class="app-wrapper">
+  <app-navbar></app-navbar>
 
-<router-outlet />
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
 
-<ng-container *ngIf="!hideFooter()">
-  <footer class="footer mt-5 text-center py-3 bg-light">
-    <img src="/favicon.ico" alt="Logo" class="mb-2" height="100">
-    <p class="mb-0 text-muted">Capturing Forum © 2025</p>
-  </footer>
-</ng-container>
+  <ng-container *ngIf="!hideFooter()">
+    <footer class="footer">
+      <img src="/favicon.ico" alt="Logo" class="mb-2" height="100">
+      <p class="mb-0 text-muted">Capturing Forum © 2025</p>
+    </footer>
+  </ng-container>
+</div>

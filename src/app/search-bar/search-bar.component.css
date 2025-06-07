@@ -15,5 +15,24 @@
 }
 
 .search-result-item:hover {
-  background-color: #dfebf7;
+  background-color: #ece6f5;
+}
+
+.search-btn {
+  background-color: #5e2ca8;
+  border-color: #5e2ca8;
+}
+
+.search-btn:hover {
+  background-color: #4a2385;
+  border-color: #4a2385;
+}
+
+.btn-link {
+  color: #5e2ca8;
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  color: #4a2385;
 }

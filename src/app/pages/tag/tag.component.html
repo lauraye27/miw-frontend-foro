@@ -2,10 +2,10 @@
   [errorMessage]="errorMessage"
 ></app-message>
 
-<div class="container mt-4">
+<div class="container mt-4 px-0 px-sm-3">
   <div class="row">
-    <div class="col-md-8 offset-md-2">
-      <div class="card">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
         <div class="card-header">
           <h4>Tags</h4>
           <div class="input-group mb-3">
@@ -20,7 +20,7 @@
           <div *ngFor="let tag of filteredTags" class="col">
             <div class="border rounded p-3 h-100 tag-card" (click)="navigateToTagQuestions(tag.name)">
               <h6 class="mb-2">
-                <a class="text-decoration-none fw-bold text-primary" href="javascript:void(0)">
+                <a class="text-decoration-none fw-bold tag-name">
                   {{ tag.name }}
                 </a>
               </h6>

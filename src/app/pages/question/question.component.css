@@ -1,0 +1,11 @@
+.bg-primary {
+  background-color: #ece6f5 !important;
+  color: #5e2ca8 !important;
+}
+
+.custom-tag {
+  background-color: #e69129;
+  color: white;
+  font-weight: 500;
+  border-radius: 10px;
+}

@@ -37,13 +37,15 @@ export class SearchBarComponent implements OnInit {
       switchMap(term => {
         if (term.length > 0) {
           return this.questionService.searchQuestionsAndAnswers(term, 0, 10);
+        } else {
+          this.showSearchResults = false;
+          return of({ content: [] });
         }
-        return of({ content: [] });
       })
     ).subscribe({
       next: response => {
         this.searchResults = response?.content || [];
-        this.showSearchResults = this.searchResults.length > 0;
+        this.showSearchResults = this.searchQuery.trim().length > 0;
         this.hasMoreResults = (response?.page?.number + 1) < response?.page?.totalPages;
       },
       error: err => {

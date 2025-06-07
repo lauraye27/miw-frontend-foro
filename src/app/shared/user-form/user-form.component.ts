@@ -27,6 +27,8 @@ export class UserFormComponent implements OnInit {
   @Input() options: UserFormOptions = {};
   @Output() submitted = new EventEmitter<Partial<User>>();
 
+  @Input() showLoginLink: boolean = false;
+
   form: FormGroup;
   formSubmitted = false;
 
