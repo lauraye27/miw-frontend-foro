@@ -1,36 +1,6 @@
-.container {
-  background-color: #f8f9fa;
-}
-
-.card {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: none;
-  background-color: #ffffff;
-  border-radius: 12px;
-}
-
-h2 {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333333;
-}
-
-.form-control {
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  padding: 0.75rem;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
-}
-
-.form-control:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 5px rgba(13, 110, 253, 0.25);
-}
-
 .btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: #5e2ca8;
+  border-color: #5e2ca8;
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 1px;
@@ -38,8 +8,8 @@ h2 {
 }
 
 .btn-primary:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
+  background-color: #4a2385;
+  border-color: #4a2385;
 }
 
 .text-muted {
@@ -48,5 +18,5 @@ h2 {
 }
 
 .text-muted:hover {
-  color: #0d6efd;
+  color: #4a2385;
 }

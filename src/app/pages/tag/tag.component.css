@@ -1,0 +1,23 @@
+.tag-card {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background-color: #f4f4f4;
+}
+
+.tag-card:hover {
+  transform: translateY(-2px);
+  background-color: #ece6f5;
+}
+
+.tag-card h6 {
+  margin-bottom: 0.5rem;
+}
+
+.tag-card p {
+  font-size: 0.875rem;
+  min-height: 40px;
+}
+
+.tag-name {
+  color: #5e2ca8;
+}

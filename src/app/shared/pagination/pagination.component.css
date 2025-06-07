@@ -1,0 +1,19 @@
+.page-link {
+  cursor: pointer;
+  color: #5e2ca8;
+}
+
+.page-link:hover {
+  background-color: #ece6f5;
+}
+
+.page-item.disabled .page-link {
+  cursor: default;
+  pointer-events: none;
+}
+
+.page-item.active .page-link {
+  background-color: #5e2ca8;
+  border-color: #5e2ca8;
+  color: white;
+}

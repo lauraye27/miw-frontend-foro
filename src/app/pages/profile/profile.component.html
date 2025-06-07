@@ -1,4 +1,3 @@
-<app-navbar></app-navbar>
 <app-message
         [successMessage]="successMessage"
         [errorMessage]="errorMessage"
@@ -8,7 +7,7 @@
   <h2>Profile</h2>
 
   <div class="text-end mb-3">
-    <button type="button" class="btn btn-primary" (click)="toggleEdit()">
+    <button type="button" class="auth-btn-primary" (click)="toggleEdit()">
       {{ isEditMode ? 'Cancel' : 'Edit' }}
     </button>
   </div>
@@ -26,7 +25,16 @@
 
     <div class="mb-3">
       <label for="userName">Username</label>
-      <input type="text" id="userName" class="form-control" formControlName="userName" required>
+      <input type="text" id="userName" class="form-control" formControlName="userName" required
+             [class.is-invalid]="(submitted && userProfileForm.get('userName')?.invalid) || (userProfileForm.get('userName')?.invalid &&
+                               formUtils.isTouched(userProfileForm,'userName')) || errorMessage?.includes('Username already exists')">
+      <small class="text-danger" *ngIf="(submitted && userProfileForm.get('userName')?.errors?.['required']) ||
+                   (userProfileForm.get('userName')?.errors?.['required'] && formUtils.isTouched(userProfileForm,'userName'))">
+        Username is required
+      </small>
+      <small class="text-danger" *ngIf="errorMessage?.includes('Username already exists')">
+        Username already exists
+      </small>
     </div>
 
     <div class="mb-3">
@@ -36,58 +44,71 @@
 
     <div class="mb-3">
       <label for="email">Email</label>
-      <input type="email" id="email" class="form-control" formControlName="email" autocomplete="email" required>
+      <input type="email" id="email" class="form-control" formControlName="email" autocomplete="email" required
+             [class.is-invalid]="(submitted && userProfileForm.get('email')?.invalid) || (userProfileForm.get('email')?.invalid &&
+                               formUtils.isTouched(userProfileForm,'email')) || errorMessage?.includes('Email already exists')">
+      <small class="text-danger" *ngIf="(submitted && userProfileForm.get('email')?.errors?.['required']) ||
+                   (userProfileForm.get('email')?.errors?.['required'] && formUtils.isTouched(userProfileForm,'email'))">
+        Email is required
+      </small>
+      <small class="text-danger" *ngIf="(submitted && userProfileForm.get('email')?.errors?.['email']) ||
+                   (userProfileForm.get('email')?.errors?.['email'] && formUtils.isTouched(userProfileForm,'email'))">
+        Invalid email format
+      </small>
+      <small class="text-danger" *ngIf="errorMessage?.includes('Email already exists')">
+        Email already registered
+      </small>
     </div>
 
     <div class="mb-3" *ngIf="showPasswordSection">
       <label for="password">Password</label>
       <div class="input-group">
-        <input type="password" id="password" class="form-control" formControlName="currentPassword" required>
+        <input type="password" id="password" class="form-control" formControlName="currentPassword">
         <button type="button" class="btn btn-outline-secondary input-group-text"
-          (click)="togglePasswordVisibility('password')">
-          <i class="fa-solid" [ngClass]="showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+          (click)="formUtils.togglePasswordVisibility('password')">
+          <i class="fa-solid" [ngClass]="formUtils.showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('currentPassword').invalid && formUtils.isTouched(userProfileForm,'currentPassword')">
-        <span *ngIf="userProfileForm.get('currentPassword')?.errors?.['required']">
-          Old password is required
-        </span>
+      <small class="text-danger" *ngIf="userProfileForm.get('currentPassword').invalid &&
+                                 (userProfileForm.get('currentPassword').dirty || formUtils.isTouched(userProfileForm,'currentPassword'))">
+        Current password is required when changing password
       </small>
     </div>
 
     <div class="mb-3" *ngIf="showPasswordSection">
       <label for="newPassword">New Password</label>
       <div class="input-group">
-        <input type="password" id="newPassword" class="form-control" formControlName="newPassword" required>
+        <input type="password" id="newPassword" class="form-control" formControlName="newPassword"
+               [class.is-invalid]="showPasswordSection && userProfileForm.get('newPassword')?.invalid &&
+                             (userProfileForm.get('newPassword')?.dirty || formUtils.isTouched(userProfileForm,'newPassword'))">
         <button type="button" class="btn btn-outline-secondary input-group-text"
-          (click)="togglePasswordVisibility('newPassword')">
-          <i class="fa-solid" [ngClass]="showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+          (click)="formUtils.togglePasswordVisibility('newPassword')">
+          <i class="fa-solid" [ngClass]="formUtils.showPasswords['newPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('newPassword').invalid && formUtils.isTouched(userProfileForm,'newPassword')">
-        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['required']">
-          New password is required
-        </span>
-        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['minlength']">
-          Password must be at least 8 characters long
-        </span>
-
-        <span *ngIf="userProfileForm.get('newPassword')?.errors?.['pattern']">
-          Password must contain at least one letter and one number
-        </span>
+      <small class="text-danger" *ngIf="showPasswordSection && userProfileForm.get('newPassword')?.errors?.['minlength'] &&
+                                 (userProfileForm.get('newPassword')?.dirty || formUtils.isTouched(userProfileForm,'newPassword'))">
+        Password must be at least 8 characters long
+      </small>
+      <small class="text-danger" *ngIf="showPasswordSection && userProfileForm.get('newPassword')?.errors?.['pattern'] &&
+                                 (userProfileForm.get('newPassword')?.dirty || formUtils.isTouched(userProfileForm,'newPassword'))">
+        Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (&#64;$!%*?&)
       </small>
     </div>
 
     <div class="mb-3" *ngIf="showPasswordSection">
       <label for="confirmPassword">Confirm New Password</label>
       <div class="input-group">
-        <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" required>
+        <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword"
+               [class.is-invalid]="showPasswordSection && (userProfileForm.errors?.['mismatch'] &&
+                             (userProfileForm.get('confirmPassword')?.dirty || formUtils.isTouched(userProfileForm,'confirmPassword')))">
         <button type="button" class="btn btn-outline-secondary input-group-text"
-                (click)="togglePasswordVisibility('confirmPassword')">
-          <i class="fa-solid" [ngClass]="showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+                (click)="formUtils.togglePasswordVisibility('confirmPassword')">
+          <i class="fa-solid" [ngClass]="formUtils.showPasswords['confirmPassword'] ? 'fa-eye-slash' : 'fa-eye'"></i>
         </button>
       </div>
-      <small class="text-danger" *ngIf="userProfileForm.get('confirmPassword')?.invalid && formUtils.isTouched(userProfileForm,'confirmPassword')">
+      <small class="text-danger" *ngIf="showPasswordSection && userProfileForm.errors?.['mismatch'] &&
+                                 (userProfileForm.get('confirmPassword')?.dirty || formUtils.isTouched(userProfileForm,'confirmPassword'))">
         Passwords do not match
       </small>
     </div>
@@ -100,17 +121,6 @@
     </div>
 
   </form>
-
-  <ng-template #deleteConfirmationTemplate let-data let-dialogRef="dialogRef">
-    <h2 mat-dialog-title>Confirm Action</h2>
-    <mat-dialog-content>
-      <p>{{ data.message }}</p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="dialogRef.close(false)">Cancel</button>
-      <button mat-button color="warn" (click)="dialogRef.close(true)">Delete</button>
-    </mat-dialog-actions>
-  </ng-template>
 
   <div class="text-end mt-3" *ngIf="isEditMode">
     <button type="button" class="btn btn-danger" (click)="openDeleteConfirmation()"> Delete Account </button>

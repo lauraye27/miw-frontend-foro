@@ -1,136 +1,106 @@
-import {Component, EventEmitter, Output} from '@angular/core';
-import {Subject} from 'rxjs';
-import {QuestionService} from '@core/services/question.service';
+import {Component, ElementRef, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
+import {debounceTime, distinctUntilChanged, of, Subject, switchMap} from 'rxjs';
 import {FormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
+import {QuestionService} from '@core/services/question.service';
+import {TruncatePipe} from '@core/truncate.pipe';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-search-bar',
   imports: [
-    FormsModule
+    FormsModule,
+    TruncatePipe,
+    NgForOf,
+    NgIf
   ],
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.css'
 })
-export class SearchBarComponent {
+export class SearchBarComponent implements OnInit {
   searchQuery = '';
-  // suggestions: any[] = [];
-  // showSuggestions = false;
-  private searchTerms = new Subject<string>();
-
-  @Output() liveResults = new EventEmitter<any[]>();
-  @Output() searchExecuted = new EventEmitter<string>();
-  @Output() clickOutside = new EventEmitter<void>();
-
-  constructor(private questionService: QuestionService) {
-    // this.searchTerms.pipe(
-    //   debounceTime(300),
-    //   distinctUntilChanged(),
-    //   // switchMap(query =>
-    //   //   query.length > 2
-    //   //     ? this.questionService.searchSuggestions(query)
-    //   //     : of([])
-    //   // )
-    // ).subscribe(results => {
-    //   // this.suggestions = results;
-    //   // this.showSuggestions = results.length > 0;
-    //   this.liveResults.emit(results);
-    // });
-  }
-
-  onSearchInput(): void {
-    if (this.searchQuery.length > 2) {
-      this.searchTerms.next(this.searchQuery);
-    } else {
-      // this.suggestions = [];
-      // this.showSuggestions = false;
-    }
-  }
-
-  executeSearch(): void {
-    // this.showSuggestions = false;
-    if (this.searchQuery.trim()) {
-      this.searchExecuted.emit(this.searchQuery);
-    }
-  }
-
-  // selectSuggestion(item: any): void {
-  //   this.searchQuery = item.title;
-  //   this.showSuggestions = false;
-  //   this.searchExecuted.emit(item.title);
-  // }
-
-  clearSearch(): void {
-    this.searchQuery = '';
-    this.searchExecuted.emit('');
-  }
-
-  // hideSuggestions(): void {
-  //   setTimeout(() => {
-  //     this.showSuggestions = false;
-  //     this.clickOutside.emit();
-  //   }, 200);
-  // }
-
-  // @HostListener('document:click', ['$event'])
-  // onClickOutside(event: Event) {
-  //   if (!this.isInside(event.target as HTMLElement)) {
-  //     this.showSuggestions = false;
-  //   }
-  // }
-
-  // private isInside(target: HTMLElement): boolean {
-  //   return !!target.closest('.search-container');
-  // }
-}
-
-
-
-/*export class SearchBarComponent {
-  searchQuery = '';
-  suggestions: any[] = [];
-  showSuggestions = false;
-  private searchTerms = new Subject<string>();
+  searchTerms = new Subject<string>();
+  searchResults: any[] = [];
+  showSearchResults = false;
+  searchPage = 0;
+  loadingMore = false;
+  hasMoreResults = true;
 
   @Output() searchExecuted = new EventEmitter<string>();
 
-  constructor(private questionService: QuestionService) {
+  constructor(private readonly questionService: QuestionService, private readonly router: Router, private elementRef: ElementRef) { }
+
+  ngOnInit() {
     this.searchTerms.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(query => query.length > 2
-        ? this.questionService.searchSuggestions(query)
-        : of([]))
-    ).subscribe(results => {
-      this.suggestions = results;
-      this.showSuggestions = results.length > 0;
+      switchMap(term => {
+        if (term.length > 0) {
+          return this.questionService.searchQuestionsAndAnswers(term, 0, 10);
+        } else {
+          this.showSearchResults = false;
+          return of({ content: [] });
+        }
+      })
+    ).subscribe({
+      next: response => {
+        this.searchResults = response?.content || [];
+        this.showSearchResults = this.searchQuery.trim().length > 0;
+        this.hasMoreResults = (response?.page?.number + 1) < response?.page?.totalPages;
+      },
+      error: err => {
+        console.error('Live search error:', err);
+        this.searchResults = [];
+        this.showSearchResults = false;
+      }
     });
   }
 
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event) {
-    if (!this.isInside(event.target as HTMLElement)) {
-      this.showSuggestions = false;
-    }
-  }
-
-  private isInside(target: HTMLElement): boolean {
-    return !!target.closest('.search-container');
-  }
-
   onSearchInput(): void {
+    console.log('Input changed:', this.searchQuery);
     this.searchTerms.next(this.searchQuery);
   }
 
   executeSearch(): void {
-    this.showSuggestions = false;
     if (this.searchQuery.trim()) {
-      this.searchExecuted.emit(this.searchQuery);
+      this.searchTerms.next(this.searchQuery.trim());
+      this.searchPage = 0;
+      this.hasMoreResults = true;
+
+      this.searchExecuted.emit(this.searchQuery.trim());
     }
   }
 
-  selectSuggestion(item: any): void {
-    this.searchQuery = item.title;
-    this.showSuggestions = false;
-    this.searchExecuted.emit(item.title);
+  loadMoreResults(): void {
+    this.loadingMore = true;
+    this.searchPage++;
+
+    this.questionService.searchQuestionsAndAnswers(this.searchQuery, this.searchPage, 10)
+      .subscribe({
+        next: response => {
+          const newResults = response?.content || [];
+          this.searchResults = [...this.searchResults, ...newResults];
+          const currentPage = response?.page?.number;
+          const totalPages = response?.page?.totalPages;
+          this.hasMoreResults = (currentPage + 1) < totalPages;
+          this.loadingMore = false;
+        },
+        error: err => {
+          console.error(err);
+          this.loadingMore = false;
+        }
+      });
   }
-}*/
+
+  navigateToQuestion(questionId: number): void {
+    this.router.navigate(['/question', questionId]).then();
+    this.showSearchResults = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.showSearchResults = false;
+    }
+  }
+}

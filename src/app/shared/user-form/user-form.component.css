@@ -1,0 +1,43 @@
+.btn-primary {
+  background-color: #5e2ca8;
+  border-color: #5e2ca8;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #4a2385;
+  border-color: #4a2385;
+}
+
+.text-muted {
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.text-muted:hover {
+  color: #4a2385;
+}
+
+#role option:hover {
+  background-color: #ece6f5 !important;
+}
+
+#role:focus {
+  border-color: #4a2385;
+  box-shadow: 0 0 5px rgba(94, 44, 168, 0.3);
+}
+
+#role:focus option:checked {
+  background-color: #ece6f5;
+}
+
+.form-select {
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}

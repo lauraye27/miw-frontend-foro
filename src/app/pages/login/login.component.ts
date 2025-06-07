@@ -1,27 +1,31 @@
-import { Component } from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import { Router } from '@angular/router';
-import { NavbarComponent } from '../../navbar/navbar.component';
 import { AuthService } from '@core/services/auth.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {MessageComponent} from '../../shared/message/message.component';
+import {FormUtilsService} from '../../shared/services/form-utils.service';
 
 @Component({
   selector: 'app-login',
-  imports: [NavbarComponent, ReactiveFormsModule, FormsModule, MessageComponent, NgIf],
+  imports: [ReactiveFormsModule, FormsModule, MessageComponent, NgIf, NgClass],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  successMessage: string | null = null;
+
+  submitted = false;
   errorMessage: string | null = null;
 
-  constructor(private router: Router, private authService: AuthService, private readonly dialog: MatDialog) {}
+  constructor(private router: Router, private authService: AuthService, private readonly dialog: MatDialog,
+              public formUtils: FormUtilsService, private cdr: ChangeDetectorRef) {}
 
   login() {
+    this.cdr.detectChanges();
+    this.submitted = true;
     this.errorMessage = null;
 
     if (!this.email || !this.password) {
@@ -43,7 +47,6 @@ export class LoginComponent {
         } else {
           this.errorMessage = 'An unexpected error occurred. Please try again';
         }
-        this.successMessage = null;
       },
     });
   }

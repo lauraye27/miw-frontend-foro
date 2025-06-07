@@ -1,0 +1,37 @@
+<app-message
+  [errorMessage]="errorMessage"
+></app-message>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>My Answers</h3>
+  </div>
+
+  <div class="list-group mb-4">
+    <a *ngFor="let a of answers"
+       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+       (click)="navigateToAnswer(a.questionId, a.id)">
+      <div>
+        <h5 class="mb-1">{{ a.content }}</h5>
+        <small class="text-muted">
+          {{ a.creationDate | date:'dd/MM/yyyy HH:mm' }}
+        </small>
+      </div>
+      <div class="text-end">
+        <button class="btn btn-sm btn-outline-primary me-2" (click)="onEditAnswer(a.id, $event)">Edit</button>
+        <button class="btn btn-sm btn-outline-danger" (click)="onDeleteAnswer(a, $event)">Delete</button>
+      </div>
+    </a>
+  </div>
+
+  <div *ngIf="answers.length === 0" class="alert alert-info">
+    You haven't write any answers yet
+  </div>
+
+  <app-pagination
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    (pageChange)="changePage($event)"
+    [maxVisiblePages]="3">
+  </app-pagination>
+</div>

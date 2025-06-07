@@ -5,7 +5,6 @@ import { routes } from './app.routes';
 import {tokenInterceptor} from '@core/interceptors/token.interceptor';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
-// import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +13,5 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(withInterceptors([tokenInterceptor])),
     provideRouter(routes)
-    // provideClientHydration(withEventReplay()
     ]
 };

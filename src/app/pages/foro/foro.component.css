@@ -1,22 +1,49 @@
-body {
-  background-color: #f4f4f4;
-}
-.card {
-  border: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.card:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
 .list-group-item {
   border: none;
   margin-bottom: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .list-group-item:hover {
   background-color: #f8f9fa;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.custom-tag {
+  background-color: #e69129;
+  color: white;
+  font-weight: 500;
+  border-radius: 10px;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #5e2ca8 !important;
+  border-color: #5e2ca8 !important;
+  color: white !important;
+}
+
+.btn-outline-secondary {
+  background-color: white !important;
+  border-color: #5e2ca8 !important;
+  color: #5e2ca8 !important;
+}
+
+.btn-primary:hover, .btn-outline-secondary:hover {
+  background-color: #4a2385 !important;
+  border-color: #4a2385 !important;
+  color: white !important;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #4a2385;
+  border-color: #4a2385;
+  color: white;
 }

@@ -5,7 +5,7 @@ import {catchError, map} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 
 import {HttpService} from '@core/services/http.service';
-import {User} from '@core/models/user.model';
+import {User, UserPage} from '@core/models/user.model';
 import {Role} from '@core/models/role.model';
 import {Endpoints} from '@core/endpoints';
 
@@ -36,7 +36,7 @@ export class AuthService {
     );
   }
 
-  register(user: { firstName: string; lastName: string; userName: string; phone: string; email: string; password: string }): Observable<any> {
+  register(user: Partial<User>): Observable<User> {
     return this.httpService
       .post(Endpoints.REGISTER, user)
       .pipe(
@@ -53,6 +53,18 @@ export class AuthService {
     this.router.navigate(['/login']).then();
   }
 
+  createUser(user: Partial<User>): Observable<User> {
+    return this.httpService.post(Endpoints.USERS, user).pipe(
+      map(response => {
+        console.log('User created', response);
+        return response;
+      }),
+      catchError(error => {
+        return throwError(() => error);
+      })
+    );
+  }
+
   isAuthenticated(): boolean {
     return this.userSubject.value != null;
   }
@@ -65,18 +77,6 @@ export class AuthService {
     return this.hasRoles([Role.ADMIN]);
   }
 
-  isMember(): boolean {
-    return this.hasRoles([Role.MEMBER]);
-  }
-
-  untilAuthenticated(): boolean {
-    return this.hasRoles([Role.ADMIN, Role.MEMBER]);
-  }
-
-  getName(): string {
-    return this.userSubject.value ? this.userSubject.value.firstName : '???';
-  }
-
   getToken(): string {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('token');
@@ -86,6 +86,10 @@ export class AuthService {
 
   getUser(): User | null {
     return this.userSubject.value;
+  }
+
+  getUsers(page: number = 0): Observable<UserPage> {
+    return this.httpService.get(`${Endpoints.USERS}?page=${page}&size=10&sortBy=id&sortDirection=asc`);
   }
 
   private setUserFromToken(token: string) {
@@ -130,7 +134,7 @@ export class AuthService {
       return throwError(() => new Error('User ID not found'));
     }
 
-    return this.httpService.post(Endpoints.FORGOT_PASSWORD, { userId, currentPassword }).pipe(
+    return this.httpService.post(Endpoints.VERIFY_PASSWORD_ENDPOINT, { userId, currentPassword }).pipe(
       map(response => response.isValid),
       catchError(error => {
         console.error('Error verifying password:', error);
@@ -167,13 +171,10 @@ export class AuthService {
     return this.httpService.post(
       Endpoints.FORGOT_PASSWORD,
       { email }
-      //null,
-      //params
     ).pipe(
       tap(response => console.log('Response:', response)),
       catchError(error => {
         if (error.status === 404) {
-          //return throwError(() => error);
           throw new Error('User not found');
         } else if (error.status === 500) {
           throw new Error('Server error occurred');

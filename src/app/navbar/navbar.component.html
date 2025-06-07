@@ -1,58 +1,36 @@
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#" aria-label="CaptuRing Forum Home">CaptuRing Forum</a>
+    <a class="navbar-brand" href="/questions" aria-label="CaptuRing Forum Home">
+      <img src="/favicon.ico" alt="CaptuRing Forum" height="50">
+    </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" (click)="toggleMenu()"
+       aria-expanded="false" aria-label="Toggle navigation"
     > <span class="navbar-toggler-icon"></span>
     </button>
 
-    <ul class="navbar-nav ms-3">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Home</a>
-      </li>
-    </ul>
+    <div class="collapse navbar-collapse" id="navbarCollapse" [class.show]="isMenuOpen">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/questions">Questions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/tags">Tags</a>
+        </li>
+      </ul>
+    </div>
 
-<!--    <div class="d-flex flex-grow-1 mx-3">-->
-<!--      <app-search-bar (searchExecuted)="onSearch($event)"></app-search-bar>-->
-<!--    </div>-->
-
-    <div class="d-flex position-relative mx-3 flex-grow-1">
+    <div class="search-bar-container">
       <app-search-bar
         (searchExecuted)="onSearch($event)"
-        (liveResults)="onLiveResults($event)"
-        (clickOutside)="hideSearchResults()"
         class="w-100">
       </app-search-bar>
-
-      <div *ngIf="showSearchResults && searchResults"
-           class="search-results-dropdown position-absolute top-100 start-0 end-0 z-3 mt-1">
-        <div class="card">
-          <div class="card-body p-2">
-            <div *ngIf="searchResults.length > 0; else noResults">
-              <div *ngFor="let question of searchResults"
-                   class="search-result-item p-2 border-bottom"
-                   (click)="navigateToQuestion(question.id)">
-                <h6 class="mb-1">{{ question.title }}</h6>
-                <small class="text-muted">
-                  {{ question.description | truncate:50 }}
-                </small>
-              </div>
-            </div>
-            <ng-template #noResults>
-              <div class="text-center p-2 text-muted">
-                No results found for "{{ searchQuery }}"
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="user-section">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown" *ngIf="isAuthenticated">
-          <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button"
+          <a class="nav-link position-relative" href="/questions" id="notificationsDropdown" role="button"
              data-bs-toggle="dropdown" aria-expanded="false"
           >
             <i class="fas fa-bell"></i>
@@ -65,35 +43,39 @@
               <a class="dropdown-item">No new notifications</a>
             </li>
             <li *ngFor="let notification of notifications">
-              <a class="dropdown-item d-flex align-items-center" href="#" (click)="viewNotification(notification)">
+              <a class="dropdown-item d-flex align-items-center"
+                 (click)="viewNotification(notification); $event.preventDefault()"
+                 [routerLink]="['/question', notification.questionId]"
+                 [queryParams]="{answer: notification.answerId}">
                 <div class="notification-icon me-2">
                   <i class="fas fa-{{getNotificationIcon(notification.type)}}"></i>
                 </div>
                 <div>
                   <div class="notification-text">{{notification.message}}</div>
+                  <small class="text-muted">
+                    {{notification.creationDate | date:'dd/MM/yyyy HH:mm'}}
+                  </small>
                 </div>
               </a>
             </li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-center" href="/notifications">View all notifications</a></li>
           </ul>
         </li>
 
         <li class="nav-item dropdown" *ngIf="isAuthenticated">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+          <a class="nav-link dropdown-toggle" href="/questions" role="button"
             data-bs-toggle="dropdown" aria-expanded="false"
           >
             <span class="user-avatar">{{ userNameInitials }}</span>
           </a>
           <ul class="dropdown-menu dropdown-profile">
-            <li><a class="dropdown-item" href="/profile">Profile</a></li>
-            <li><a class="dropdown-item" href="#" routerLink="/my-questions">My Questions</a></li>
-            <li><a class="dropdown-item" href="#" routerLink="/my-answers">My Answers</a></li>
+            <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
+            <li><a class="dropdown-item" routerLink="/my-questions">My Questions</a></li>
+            <li><a class="dropdown-item" routerLink="/my-answers">My Answers</a></li>
 
-            <ng-container *ngIf="user?.role === 'ADMIN'">
+            <ng-container *ngIf="authService.isAdmin()">
               <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#" routerLink="/admin/tags">Manage Tags</a></li>
-              <li><a class="dropdown-item" href="#" routerLink="/admin/users">Manage Users</a></li>
+              <li><a class="dropdown-item" routerLink="/admin/tags">Tags</a></li>
+              <li><a class="dropdown-item" routerLink="/admin/users">Users</a></li>
             </ng-container>
 
             <li><hr class="dropdown-divider" /></li>

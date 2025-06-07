@@ -1,0 +1,23 @@
+<app-message
+  [successMessage]="successMessage"
+  [errorMessage]="errorMessage"
+></app-message>
+
+<div class="container mt-5">
+  <h2 class="mb-4">Edit your Answer</h2>
+
+  <form (ngSubmit)="submitAnswer()" #answerForm="ngForm">
+
+    <div class="mb-3">
+      <label for="content" class="form-label">Content</label>
+      <textarea type="text" id="content" class="form-control form-control-lg"
+                placeholder="Enter a short and descriptive content..."
+                [(ngModel)]="answer.content" name="content" required></textarea>
+    </div>
+
+    <button type="submit" class="auth-btn-primary" [disabled]="!answerForm.valid">
+      Submit Answer
+    </button>
+
+  </form>
+</div>

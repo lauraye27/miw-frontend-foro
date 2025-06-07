@@ -11,3 +11,13 @@ export interface User {
   password?: string;
   role?: Role;
 }
+
+export interface UserPage {
+  content: User[];
+  page: {
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  };
+}

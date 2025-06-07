@@ -1,0 +1,36 @@
+<app-message
+  [errorMessage]="errorMessage"
+></app-message>
+
+<div class="container mt-4 px-0 px-sm-3">
+  <div class="row">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header">
+          <h4>Tags</h4>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search tags"
+                   [(ngModel)]="searchQuery" (input)="searchTags()">
+            <button class="btn btn-outline-secondary" type="button" (click)="searchTags()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+          <div *ngFor="let tag of filteredTags" class="col">
+            <div class="border rounded p-3 h-100 tag-card" (click)="navigateToTagQuestions(tag.name)">
+              <h6 class="mb-2">
+                <a class="text-decoration-none fw-bold tag-name">
+                  {{ tag.name }}
+                </a>
+              </h6>
+              <div class="text-muted small">
+                {{ tag.questionCount || 0 }} questions
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

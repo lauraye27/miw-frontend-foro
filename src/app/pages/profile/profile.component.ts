@@ -1,28 +1,22 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '@core/services/auth.service';
 import {Router} from '@angular/router';
-import {NavbarComponent} from '../../navbar/navbar.component';
 import {NgClass, NgIf} from '@angular/common';
 import {filter, take} from 'rxjs';
 import {User} from '@core/models/user.model';
 import {MessageComponent} from "../../shared/message/message.component";
 import { FormUtilsService } from '../../shared/services/form-utils.service';
-import {MatDialog, MatDialogActions, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
-import {MatButton} from '@angular/material/button';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-profile',
   imports: [
     ReactiveFormsModule,
-    NavbarComponent,
     NgIf,
     NgClass,
-    MessageComponent,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogTitle,
-    MatButton,
+    MessageComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -31,16 +25,11 @@ export class ProfileComponent  implements OnInit {
   userProfileForm: FormGroup;
   user: User = null;
   isEditMode: boolean = false;
-  showPasswords: { [key: string]: boolean } = {
-    password: false,
-    newPassword: false,
-    confirmPassword: false
-  };
+
   showPasswordSection: boolean = false;
+  submitted = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
-
-  @ViewChild('deleteConfirmationTemplate') deleteConfirmationTemplate!: TemplateRef<any>;
 
   constructor(private authService: AuthService, private router: Router, private fb: FormBuilder,
               public formUtils: FormUtilsService, protected dialog: MatDialog) {
@@ -53,13 +42,12 @@ export class ProfileComponent  implements OnInit {
           email: ['', [Validators.required, Validators.email]],
           currentPassword: [''],
           newPassword: ['', [
-            Validators.minLength(6),
-            Validators.maxLength(12),
-            Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/),
+            Validators.minLength(8),
+            Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
           ]],
           confirmPassword: ['']
         }, {
-      validators: this.passwordMatchValidator
+      validators: formUtils.passwordMatchValidator('newPassword'),
     });
   }
 
@@ -90,18 +78,6 @@ export class ProfileComponent  implements OnInit {
     );
   }
 
-  togglePasswordVisibility(field: string): void {
-    this.showPasswords[field] = !this.showPasswords[field];
-    const passwordField = document.getElementById(field) as HTMLInputElement;
-    passwordField.type = this.showPasswords[field] ? 'text' : 'password';
-  }
-
-  passwordMatchValidator(formGroup: FormGroup): any {
-    const newPassword = formGroup.get('newPassword')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
-    return newPassword === confirmPassword ? null : { passwordsDontMatch: true };
-  }
-
   toggleEdit(): void {
     this.isEditMode = !this.isEditMode;
     this.errorMessage = null;
@@ -119,8 +95,10 @@ export class ProfileComponent  implements OnInit {
       this.userProfileForm.get('newPassword')?.reset();
       this.userProfileForm.get('confirmPassword')?.reset();
 
+      this.userProfileForm.get('currentPassword')?.setErrors(null);
       this.userProfileForm.get('newPassword')?.setErrors(null);
       this.userProfileForm.get('confirmPassword')?.setErrors(null);
+      this.userProfileForm.setErrors(null);
     }
   }
 
@@ -142,6 +120,68 @@ export class ProfileComponent  implements OnInit {
     this.userProfileForm.markAsUntouched();
     this.errorMessage = '';
     this.showPasswordSection = false;
+  }
+
+  saveChanges(): void {
+    this.submitted = true;
+    this.errorMessage = null;
+    this.successMessage = null;
+
+    const validationResult = this.validateForm();
+    if (!validationResult.isValid) {
+      this.errorMessage = validationResult.errorMessage;
+      return;
+    }
+
+    const { updatedUser, currentPassword, newPassword } = validationResult.data;
+    if (this.showPasswordSection) {
+      this.updateUserWithPasswordVerification(updatedUser, currentPassword, newPassword);
+    } else {
+      this.updateUser(updatedUser);
+    }
+  }
+
+  openDeleteConfirmation(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Account',
+        message: 'Are you sure you want to delete the account? This action cannot be undone.'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.deleteAccount();
+      }
+    });
+  }
+
+  deleteAccount() {
+    const userId = this.authService.getUser()?.id;
+    if (!userId) {
+      this.errorMessage = 'Error in getting user';
+      return;
+    }
+
+    this.authService.deleteUser(userId).subscribe({
+      next: () => {
+        this.authService.logout();
+        this.router.navigate(['/login']).then(() => {
+          this.successMessage = 'Account eliminated successfully';
+        });
+      },
+      error: (err) => {
+        console.error('Error deleting account:', err);
+        if (err.status === 404) {
+          this.errorMessage = 'User not found';
+        } else if (err.status === 401) {
+          this.errorMessage = 'No permission to delete';
+        } else {
+          this.errorMessage = 'An unexpected error occurred. Please try again';
+        }
+      }
+    });
   }
 
   private validateForm(): { isValid: boolean, data: any, errorMessage: string } {
@@ -191,6 +231,7 @@ export class ProfileComponent  implements OnInit {
       next: () => {
         this.successMessage = 'Changes saved successfully';
         this.errorMessage = null;
+        this.submitted = false;
         this.toggleEdit();
         this.loadUserDetails();
 
@@ -199,66 +240,7 @@ export class ProfileComponent  implements OnInit {
         }, 2000);
       },
       error: error => {
-        console.error('Error en la actualización:', error);
-        this.errorMessage = error.status === 400 ? 'Validation failed'
-          : error?.status === 403 ? 'Permission denied' : 'Error updating user';
-      }
-    });
-  }
-
-  saveChanges(): void {
-    const validationResult = this.validateForm();
-    if (!validationResult.isValid) {
-      this.errorMessage = validationResult.errorMessage;
-      return;
-    }
-
-    const { updatedUser, currentPassword, newPassword } = validationResult.data;
-    if (this.showPasswordSection) {
-      this.updateUserWithPasswordVerification(updatedUser, currentPassword, newPassword);
-    } else {
-      this.updateUser(updatedUser);
-    }
-  }
-
-  openDeleteConfirmation() {
-    const dialogRef = this.dialog.open(this.deleteConfirmationTemplate, {
-      width: '400px',
-      data: {
-        message: 'Are you sure you want to delete the account? This action cannot be undone'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe((isConfirmed: boolean) => {
-      if (isConfirmed) {
-        this.deleteAccount();
-      }
-    });
-  }
-
-  deleteAccount() {
-    const userId = this.authService.getUser()?.id;
-    if (!userId) {
-      this.errorMessage = 'Error in getting user';
-      return;
-    }
-
-    this.authService.deleteUser(userId).subscribe({
-      next: () => {
-        this.authService.logout();
-        this.router.navigate(['/login']).then(() => {
-          this.successMessage = 'Account eliminated successfully';
-        });
-      },
-      error: (err) => {
-        console.error('Error deleting account:', err);
-        if (err.status === 404) {
-          this.errorMessage = 'User not found';
-        } else if (err.status === 401) {
-          this.errorMessage = 'No permission to delete';
-        } else {
-          this.errorMessage = 'An unexpected error occurred. Please try again';
-        }
+        this.errorMessage = error.error.message;
       }
     });
   }

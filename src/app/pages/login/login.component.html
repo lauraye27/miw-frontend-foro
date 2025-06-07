@@ -1,25 +1,34 @@
-<app-navbar></app-navbar>
+<app-message
+  [errorMessage]="errorMessage"
+></app-message>
 
-<div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
-  <div class="card shadow-lg p-4" style="width: 350px; border-radius: 12px">
-    <h2 class="text-center mb-4">Log in</h2>
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="auth-title">
+      Log in
+    </h2>
 
-    <app-message
-      [successMessage]="successMessage"
-      [errorMessage]="errorMessage"
-    ></app-message>
-
-    <form (ngSubmit)="login()">
+    <form class="auth-form" (ngSubmit)="login()">
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input type="email" id="email" class="form-control" placeholder="Enter your email" [(ngModel)]="email" name="email" required/>
+        <input type="email" id="email" class="form-control" placeholder="Enter your email" [(ngModel)]="email" name="email" required
+               [class.is-invalid]="submitted && !email"/>
+        <small class="text-danger" *ngIf="submitted && !email">
+          Email is required
+        </small>
       </div>
 
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" class="form-control" placeholder="Password" [(ngModel)]="password" name="password" required
-               #passwordRef="ngModel"/>
-        <small class="text-danger" *ngIf="passwordRef.invalid && (passwordRef.touched || passwordRef.dirty)">
+        <div class="input-group">
+          <input type="password" id="password" class="form-control" placeholder="8+ characters" [(ngModel)]="password" name="password" required
+                 [class.is-invalid]="submitted && !password" #passwordRef="ngModel"/>
+          <button type="button" class="btn btn-outline-secondary input-group-text"
+                  (click)="formUtils.togglePasswordVisibility('password')">
+            <i class="fa-solid" [ngClass]="formUtils.showPasswords['password'] ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
+        <small class="text-danger" *ngIf="(submitted && !password) || (passwordRef.invalid && (passwordRef.touched || passwordRef.dirty))">
           Password is required
         </small>
       </div>

@@ -12,7 +12,7 @@ export class QuestionService {
 
   constructor(private readonly httpService: HttpService) { }
 
-  createQuestion(question: any): Observable<any> {
+  createQuestion(question: any): Observable<Question> {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -28,7 +28,7 @@ export class QuestionService {
     );
   }
 
-  updateQuestion(questionId: number, questionData: any): Observable<any> {
+  updateQuestion(questionId: number, questionData: any): Observable<Question> {
     return this.httpService.put(`${Endpoints.QUESTIONS}/${questionId}`, questionData);
   }
 
@@ -36,12 +36,19 @@ export class QuestionService {
     return this.httpService.delete(`${Endpoints.QUESTIONS}/${questionId}`);
   }
 
-  getQuestions(page: number = 0): Observable<any> {
-    return this.httpService.get(`${Endpoints.QUESTIONS}?page=${page}&size=10&sortBy=creationDate&sortDirection=asc`);
+  getQuestions(page: number = 0, sortBy: string = 'creationDate', sortDirection: string = 'desc', unanswered?: boolean, tag?: string): Observable<any> {
+    let params = `?page=${page}&size=10&sortBy=${sortBy}&sortDirection=${sortDirection}`;
+    if (unanswered) {
+      params += `&unanswered=${unanswered}`;
+    }
+    if (tag) {
+      params += `&tag=${encodeURIComponent(tag)}`;
+    }
+    return this.httpService.get(`${Endpoints.QUESTIONS}${params}`);
   }
 
-  getMyQuestions(email: string, page: number, size: number): Observable<any> {
-    return this.httpService.get(`${Endpoints.QUESTION_MY}?page=${page}&size=10&sortBy=creationDate&sortDirection=asc`);
+  getMyQuestions(page: number = 0): Observable<any> {
+    return this.httpService.get(`${Endpoints.QUESTION_MY}?page=${page}&size=10&sortBy=creationDate&sortDirection=desc`);
   }
 
   getQuestionById(id: number): Observable<Question> {
@@ -64,9 +71,10 @@ export class QuestionService {
     );
   }
 
-  searchQuestions(query: string, page: number = 0, size: number = 10): Observable<any> {
+  searchQuestionsAndAnswers(query: string, page: number = 0, size: number = 10): Observable<any> {
+    console.log('Searching for:', query);
     return this.httpService.get(
-      `${Endpoints.QUESTIONS}/search?query=${query}&page=${page}&size=${size}`
+      `${Endpoints.QUESTIONS}/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`
     ).pipe(
       catchError(error => {
         console.error('Error searching questions:', error);
@@ -74,8 +82,4 @@ export class QuestionService {
       })
     );
   }
-
-  // searchSuggestions(query: string): Observable<any[]> {
-  //   return this.httpService.get(`${Endpoints.QUESTIONS}/suggestions?query=${query}`);
-  // }
 }
