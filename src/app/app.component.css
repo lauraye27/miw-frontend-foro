@@ -14,6 +14,29 @@
   background-color: #f8f9fa;
   border-top: 1px solid #dee2e6;
   padding: 20px 0;
-  text-align: center;
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+#authors {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+#miw-logo {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 576px) {
+  #miw-logo {
+    position: static;
+    transform: none;
+  }
 }

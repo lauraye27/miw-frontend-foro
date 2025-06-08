@@ -65,7 +65,7 @@ app-search-bar .form-control:focus {
 
 .dropdown-profile {
   position: absolute;
-  top: 40px;
+  top: 100%;
   min-width: 200px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -100,14 +100,9 @@ app-search-bar .form-control:focus {
     top: 100%;
     left: 0;
     right: 0;
-    width: auto;
+    padding: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 0.5rem 1rem;
     z-index: 1050;
-  }
-
-  .navbar-collapse .nav-link {
-    padding: 0.75rem 1rem;
   }
 
   .navbar-collapse .nav-link:hover {
@@ -118,5 +113,29 @@ app-search-bar .form-control:focus {
 
   .notification-dropdown {
     position: absolute;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-toggler {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .search-bar-container {
+    position: relative;
+    width: 50%;
+    max-width: 200px;
+    left: 25%;
+  }
+
+  .navbar-nav .nav-link {
+    font-size: 0.75rem;
+  }
+
+  .notification-dropdown {
+    position: absolute;
+    overflow-y: auto;
+    width: auto;
   }
 }
