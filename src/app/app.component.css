@@ -27,14 +27,25 @@
   margin-bottom: 0.5rem;
 }
 
+#upm-logo {
+  position: absolute;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 #miw-logo {
   position: absolute;
-  right: 20px;
+  right: 40px;
   top: 50%;
   transform: translateY(-50%);
 }
 
 @media (max-width: 576px) {
+  #upm-logo {
+    position: static;
+    transform: none;
+  }
   #miw-logo {
     position: static;
     transform: none;
